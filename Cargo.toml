@@ -1,0 +1,12 @@
+[package]
+name = "embodiment_of_fading_dream"
+version = "0.1.0"
+authors = ["Corbin Stark"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+raylib = "1.0.0"
+cgmath = "0.17.0"
+gl = "0.14.0"
