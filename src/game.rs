@@ -24,15 +24,12 @@ impl State for Game {
         maps[MaterialMapType::MAP_ALBEDO as usize].texture = texture;
     }
 
-    fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> StateChange {
+    fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
         rl.update_camera(&mut self.camera);
         //USER INPUT
         if rl.is_key_pressed(KeyboardKey::KEY_BACKSPACE) {
             //Go back to main menu on escape
-            return StateChange {
-                should_change: true,
-                change_to: 0,
-            };
+            return 1;
         }
 
         //DRAWING
@@ -79,10 +76,7 @@ impl State for Game {
         d.draw_fps(20, 20);
 
         //Return state change = false
-        StateChange {
-            should_change: false,
-            change_to: 0,
-        }
+        NO_STATE_CHANGE
     }
 
     fn leave(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) {}

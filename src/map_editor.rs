@@ -1,7 +1,6 @@
 use crate::*;
 
 pub struct MapEditor {
-    test: Texture2D,
     camera: Camera,
 }
 
@@ -10,7 +9,7 @@ impl State for MapEditor {
         rl.set_camera_mode(self.camera, CameraMode::CAMERA_FREE);
     }
 
-    fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> StateChange {
+    fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
         rl.update_camera(&mut self.camera);
         //USER INPUT
         if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {}
@@ -25,10 +24,7 @@ impl State for MapEditor {
         d.draw_fps(20, 20);
 
         //Return state change = false
-        StateChange {
-            should_change: false,
-            change_to: 0,
-        }
+        NO_STATE_CHANGE
     }
 
     fn leave(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) {}
@@ -37,7 +33,6 @@ impl State for MapEditor {
 impl MapEditor {
     pub fn new(rl: &mut RaylibHandle, thread: &mut RaylibThread) -> Self {
         MapEditor {
-            test: rl.load_texture(thread, "art/test.png").unwrap(),
             camera: Camera::perspective(
                 //Position
                 Vector3 {
