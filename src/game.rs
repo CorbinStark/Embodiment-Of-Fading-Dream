@@ -79,7 +79,7 @@ impl State for Game {
         NO_STATE_CHANGE
     }
 
-    fn leave(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) {}
+    fn leave(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
 }
 
 impl Game {

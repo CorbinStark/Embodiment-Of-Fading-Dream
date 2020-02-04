@@ -1,7 +1,6 @@
-#![allow(unused_variables)]
-
 use raylib::prelude::*;
 
+//State rs file includes
 mod game;
 mod main_menu;
 mod map_editor;
