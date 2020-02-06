@@ -10,9 +10,9 @@ pub struct MainMenu {
 }
 
 impl State for MainMenu {
-    fn enter(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) {}
+    fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
 
-    fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> StateChange {
+    fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
         //USER INPUT
         if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {
             self.current = self.current + 1;
@@ -30,17 +30,11 @@ impl State for MainMenu {
         if rl.is_key_pressed(KeyboardKey::KEY_ENTER) {
             //If selected play game
             if self.current == 0 {
-                return StateChange {
-                    should_change: true,
-                    change_to: 1,
-                };
+                return 2;
             }
             //If selected options
             if self.current == 1 {
-                return StateChange {
-                    should_change: true,
-                    change_to: 2,
-                };
+                return 3;
             }
             //If selected quit
             if self.current == 2 {
@@ -86,13 +80,10 @@ impl State for MainMenu {
         }
 
         //Return state change = false
-        StateChange {
-            should_change: false,
-            change_to: 0,
-        }
+        NO_STATE_CHANGE
     }
 
-    fn leave(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) {}
+    fn leave(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
 }
 
 impl MainMenu {

@@ -1,5 +1,6 @@
 use raylib::prelude::*;
 
+//State rs file includes
 mod game;
 mod main_menu;
 mod map_editor;
@@ -23,10 +24,11 @@ fn main() {
     let main_menu = Box::new(MainMenu::new(&mut rl, &mut thread));
 
     //Add states to the state manager
+    //State 0 is NO_STATE_CHANGE
     let mut statelist = create_state_group();
-    add_state(&mut statelist, &mut thread, &mut rl, main_menu); //state 0
-    add_state(&mut statelist, &mut thread, &mut rl, game); //state 1
-    add_state(&mut statelist, &mut thread, &mut rl, map_editor); //state 2
+    add_state(&mut statelist, &mut thread, &mut rl, main_menu); //state 1
+    add_state(&mut statelist, &mut thread, &mut rl, game); //state 2
+    add_state(&mut statelist, &mut thread, &mut rl, map_editor); //state 3
     set_state(&mut statelist, &mut thread, &mut rl, 0); //set state menu
 
     //Run current state
