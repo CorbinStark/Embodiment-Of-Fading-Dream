@@ -10,7 +10,7 @@ pub struct MainMenu {
 }
 
 impl State for MainMenu {
-    fn enter(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) {}
+    fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
 
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
         //USER INPUT
@@ -83,7 +83,7 @@ impl State for MainMenu {
         NO_STATE_CHANGE
     }
 
-    fn leave(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) {}
+    fn leave(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
 }
 
 impl MainMenu {

@@ -5,7 +5,7 @@ pub struct MapEditor {
 }
 
 impl State for MapEditor {
-    fn enter(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) {
+    fn enter(&mut self, rl: &mut RaylibHandle, _thread: &mut RaylibThread) {
         rl.set_camera_mode(self.camera, CameraMode::CAMERA_FREE);
     }
 
@@ -27,11 +27,11 @@ impl State for MapEditor {
         NO_STATE_CHANGE
     }
 
-    fn leave(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) {}
+    fn leave(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
 }
 
 impl MapEditor {
-    pub fn new(rl: &mut RaylibHandle, thread: &mut RaylibThread) -> Self {
+    pub fn new(_rl: &mut RaylibHandle, _thread: &mut RaylibThread) -> Self {
         MapEditor {
             camera: Camera::perspective(
                 //Position
