@@ -5,6 +5,7 @@ mod game;
 mod main_menu;
 mod map_editor;
 mod states;
+
 use game::*;
 use main_menu::*;
 use map_editor::*;
@@ -19,9 +20,9 @@ fn main() {
     rl.set_target_fps(60);
 
     //Initialize states
-    let game = Box::new(Game::new(&mut rl, &mut thread));
-    let map_editor = Box::new(MapEditor::new(&mut rl, &mut thread));
-    let main_menu = Box::new(MainMenu::new(&mut rl, &mut thread));
+    let game        = Box::new(Game::new(&mut rl, &mut thread));
+    let map_editor  = Box::new(MapEditor::new(&mut rl, &mut thread));
+    let main_menu   = Box::new(MainMenu::new(&mut rl, &mut thread));
 
     //Add states to the state manager
     //State 0 is NO_STATE_CHANGE
