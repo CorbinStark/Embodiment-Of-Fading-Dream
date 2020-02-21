@@ -5,11 +5,13 @@ mod game;
 mod main_menu;
 mod map_editor;
 mod states;
+mod map;
 
 use game::*;
 use main_menu::*;
 use map_editor::*;
 use states::*;
+use map::*;
 
 fn main() {
     //Initialize window and global settings
