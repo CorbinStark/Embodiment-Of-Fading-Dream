@@ -11,6 +11,7 @@ pub struct Unit {
     //whatever else a unit needs
 }
 
+//#[derive(Clone)]
 pub struct Map {
     grid: Vec<Vec<i32>>, //2d array (2d vec) of i32 (IDs) that correspond to tile types (textures for the tiles, wall, ground, etc.)
     width: i32,
@@ -67,7 +68,7 @@ impl FillNode {
     }
 }
 
-fn add_fill_node(map: Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bool>, Q: &mut Vec<FillNode>, path: &mut Vec<(i32, i32)>, range: i32, heuristic: fn(Map, i32, i32) -> i32) {
+fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bool>, Q: &mut Vec<FillNode>, path: &mut Vec<(i32, i32)>, range: i32, heuristic: fn(Map, i32, i32) -> i32) {
     if n.x + dx < 0 || n.x + dx > map.width - 1 {
         return;
     }
@@ -79,11 +80,11 @@ fn add_fill_node(map: Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<boo
     }
 
     let mapcopy = Map {
-        grid: map.grid,
+        grid: map.grid.clone(),
         width: map.width,
         height: map.height,
-        units: map.units,
-        tiles: map.tiles,
+        units: map.units.clone(),
+        tiles: map.tiles.clone(),
     };
     let h = heuristic(mapcopy, n.x, n.y);
     if h == -1 {
@@ -114,10 +115,10 @@ fn floodfill(map: Map, start: (i32, i32), range: i32, heuristic: fn(Map, i32, i3
     
         Q.pop();
 
-        add_fill_node(map, -1,  0, &n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(map,  1,  0, &n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(map,  0, -1, &n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(map,  0,  1, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(&map, -1,  0, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(&map,  1,  0, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(&map,  0, -1, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(&map,  0,  1, &n, &mut visited, &mut Q, &mut path, range, heuristic);
         
     }
 
