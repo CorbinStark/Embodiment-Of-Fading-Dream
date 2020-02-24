@@ -50,6 +50,7 @@ impl Map {
 //      draw_texture(map.tiles[ map.grid[x][y] ], x * tile_size, y * tile_size);
 
 //Algorithm to get the range of possible movements for a unit
+#[derive(Clone, Copy)]
 struct FillNode {
     x: i32,
     y: i32,
@@ -108,13 +109,16 @@ fn floodfill(map: Map, start: (i32, i32), range: i32, heuristic: fn(Map, i32, i3
     path.push(start);
 
     while !Q.is_empty() {
-        let n = Q.first().unwrap();
+      
+        let n = Q.first().unwrap().clone();
+    
         Q.pop();
 
-        add_fill_node(map, -1,  0, n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(map,  1,  0, n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(map,  0, -1, n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(map,  0,  1, n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(map, -1,  0, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(map,  1,  0, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(map,  0, -1, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(map,  0,  1, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        
     }
 
     path
