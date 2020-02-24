@@ -11,6 +11,7 @@ pub struct Unit {
     //whatever else a unit needs
 }
 
+//#[derive(Clone)]
 pub struct Map {
     grid: Vec<Vec<i32>>, //2d array (2d vec) of i32 (IDs) that correspond to tile types (textures for the tiles, wall, ground, etc.)
     width: i32,
@@ -50,6 +51,7 @@ impl Map {
 //      draw_texture(map.tiles[ map.grid[x][y] ], x * tile_size, y * tile_size);
 
 //Algorithm to get the range of possible movements for a unit
+#[derive(Clone, Copy)]
 struct FillNode {
     x: i32,
     y: i32,
@@ -66,7 +68,7 @@ impl FillNode {
     }
 }
 
-fn add_fill_node(map: Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bool>, Q: &mut Vec<FillNode>, path: &mut Vec<(i32, i32)>, range: i32, heuristic: fn(Map, i32, i32) -> i32) {
+fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bool>, Q: &mut Vec<FillNode>, path: &mut Vec<(i32, i32)>, range: i32, heuristic: fn(i32) -> i32) {
     if n.x + dx < 0 || n.x + dx > map.width - 1 {
         return;
     }
@@ -77,14 +79,15 @@ fn add_fill_node(map: Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<boo
         return;
     }
 
-    let mapcopy = Map {
-        grid: map.grid,
-        width: map.width,
-        height: map.height,
-        units: map.units,
-        tiles: map.tiles,
-    };
-    let h = heuristic(mapcopy, n.x, n.y);
+    //let mapcopy = Map {
+      //  grid: map.grid.clone(),
+      //  width: map.width,
+      //  height: map.height,
+      //  units: map.units.clone(),
+      //  tiles: map.tiles.clone(),
+    //};
+    //let h = heuristic(mapcopy, n.x, n.y);
+    let h = heuristic(map.grid[n.x as usize][n.y as usize]);
     if h == -1 {
         return;
     }
@@ -96,7 +99,7 @@ fn add_fill_node(map: Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<boo
     }
 }
 
-fn floodfill(map: Map, start: (i32, i32), range: i32, heuristic: fn(Map, i32, i32) -> i32) -> Vec<(i32, i32)>{
+fn floodfill(map: Map, start: (i32, i32), range: i32, heuristic: fn(i32) -> i32) -> Vec<(i32, i32)>{
     let mut visited: Vec<bool> = vec![];
     visited.reserve( (map.width * map.height) as usize);
     visited[ (start.0 + start.1 * map.width) as usize ] = true;
@@ -108,13 +111,16 @@ fn floodfill(map: Map, start: (i32, i32), range: i32, heuristic: fn(Map, i32, i3
     path.push(start);
 
     while !Q.is_empty() {
-        let n = Q.first().unwrap();
+      
+        let n = Q.first().unwrap().clone();
+    
         Q.pop();
 
-        add_fill_node(map, -1,  0, n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(map,  1,  0, n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(map,  0, -1, n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(map,  0,  1, n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(&map, -1,  0, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(&map,  1,  0, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(&map,  0, -1, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(&map,  0,  1, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        
     }
 
     path
