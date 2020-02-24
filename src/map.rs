@@ -68,7 +68,7 @@ impl FillNode {
     }
 }
 
-fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bool>, Q: &mut Vec<FillNode>, path: &mut Vec<(i32, i32)>, range: i32, heuristic: fn(Map, i32, i32) -> i32) {
+fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bool>, Q: &mut Vec<FillNode>, path: &mut Vec<(i32, i32)>, range: i32, heuristic: fn(i32) -> i32) {
     if n.x + dx < 0 || n.x + dx > map.width - 1 {
         return;
     }
@@ -79,14 +79,15 @@ fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bo
         return;
     }
 
-    let mapcopy = Map {
-        grid: map.grid.clone(),
-        width: map.width,
-        height: map.height,
-        units: map.units.clone(),
-        tiles: map.tiles.clone(),
-    };
-    let h = heuristic(mapcopy, n.x, n.y);
+    //let mapcopy = Map {
+      //  grid: map.grid.clone(),
+      //  width: map.width,
+      //  height: map.height,
+      //  units: map.units.clone(),
+      //  tiles: map.tiles.clone(),
+    //};
+    //let h = heuristic(mapcopy, n.x, n.y);
+    let h = heuristic(map.grid[n.x as usize][n.y as usize]);
     if h == -1 {
         return;
     }
@@ -98,7 +99,7 @@ fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bo
     }
 }
 
-fn floodfill(map: Map, start: (i32, i32), range: i32, heuristic: fn(Map, i32, i32) -> i32) -> Vec<(i32, i32)>{
+fn floodfill(map: Map, start: (i32, i32), range: i32, heuristic: fn(i32) -> i32) -> Vec<(i32, i32)>{
     let mut visited: Vec<bool> = vec![];
     visited.reserve( (map.width * map.height) as usize);
     visited[ (start.0 + start.1 * map.width) as usize ] = true;
