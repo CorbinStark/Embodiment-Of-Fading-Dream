@@ -1,9 +1,9 @@
-## Embodiment-Of-Fading-Dream
+# Embodiment-Of-Fading-Dream
 
 A top down isometric turn-based strategy game making use of open source assets. This was written in Rust for the intro to Rust programming 410P/510P winter 2020 course at Portland State University.
-# Instructions
+## Instructions
  Execute cargo build && cargo run to install the dependencies for the program before running it.
-# Dependencies
+## Dependencies
 ```
 [dependencies]
 ```
