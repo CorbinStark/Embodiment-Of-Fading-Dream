@@ -1,26 +1,21 @@
 use crate::*;
 
 pub struct MapEditor {
-    camera: Camera,
+    map: Map,
 }
 
 impl State for MapEditor {
-    fn enter(&mut self, rl: &mut RaylibHandle, _thread: &mut RaylibThread) {
-        rl.set_camera_mode(self.camera, CameraMode::CAMERA_FREE);
+    fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {
     }
 
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
-        rl.update_camera(&mut self.camera);
         //USER INPUT
         if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {}
 
         //DRAWING
         let mut d = rl.begin_drawing(&thread);
         d.clear_background(Color::RAYWHITE);
-        {
-            let mut d2 = d.begin_mode_3D(self.camera);
-            d2.draw_grid(20, 1.0);
-        }
+        self.map.draw(&mut d);
         d.draw_fps(20, 20);
 
         //Return state change = false
@@ -33,27 +28,7 @@ impl State for MapEditor {
 impl MapEditor {
     pub fn new(_rl: &mut RaylibHandle, _thread: &mut RaylibThread) -> Self {
         MapEditor {
-            camera: Camera::perspective(
-                //Position
-                Vector3 {
-                    x: 10.0,
-                    y: 10.0,
-                    z: 10.0,
-                },
-                //Target
-                Vector3 {
-                    x: 0.0,
-                    y: 0.0,
-                    z: 0.0,
-                },
-                //Up
-                Vector3 {
-                    x: 0.0,
-                    y: 1.0,
-                    z: 0.0,
-                },
-                45.0,
-            ),
+            map: Map::create_blank(25, 25),
         }
     }
 }

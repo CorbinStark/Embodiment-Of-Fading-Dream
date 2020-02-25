@@ -32,12 +32,16 @@ impl State for MainMenu {
             if self.current == 0 {
                 return 2;
             }
-            //If selected options
+            //If selected map editor
             if self.current == 1 {
                 return 3;
             }
-            //If selected quit
+            //If selected options
             if self.current == 2 {
+                return 4;
+            }
+            //If selected quit
+            if self.current == 3 {
                 std::process::exit(0);
             }
         }
@@ -93,6 +97,7 @@ impl MainMenu {
             bg: rl.load_texture(thread, "art/bg.png").unwrap(),
             options: vec![
                 "Start Game".to_string(),
+                "Map Editor".to_string(),
                 "Options".to_string(),
                 "Quit Game".to_string(),
             ],
