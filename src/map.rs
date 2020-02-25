@@ -68,7 +68,7 @@ impl FillNode {
     }
 }
 
-fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bool>, Q: &mut Vec<FillNode>, path: &mut Vec<(i32, i32)>, range: i32, heuristic: fn(i32) -> i32) {
+fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bool>, q: &mut Vec<FillNode>, path: &mut Vec<(i32, i32)>, range: i32, heuristic: fn(i32) -> i32) {
     if n.x + dx < 0 || n.x + dx > map.width - 1 {
         return;
     }
@@ -94,7 +94,7 @@ fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bo
 
     if !visited[ ((n.x+dx) + (n.y+dy) * map.width) as usize ] {
         visited[ ((n.x+dx) + (n.y+dy) * map.width) as usize ] = true;
-        Q.push( FillNode::new(n.x+dx, n.y+dy, n.depth+h) );
+        q.push( FillNode::new(n.x+dx, n.y+dy, n.depth+h) );
         path.push( (n.x+dx, n.y+dy) );
     }
 }
@@ -104,22 +104,22 @@ fn floodfill(map: Map, start: (i32, i32), range: i32, heuristic: fn(i32) -> i32)
     visited.reserve( (map.width * map.height) as usize);
     visited[ (start.0 + start.1 * map.width) as usize ] = true;
 
-    let mut Q: Vec<FillNode> = vec![];
-    Q.push( FillNode::new(start.0, start.1, 0) );
+    let mut q: Vec<FillNode> = vec![];
+    q.push( FillNode::new(start.0, start.1, 0) );
 
     let mut path: Vec<(i32, i32)> = vec![];
     path.push(start);
 
-    while !Q.is_empty() {
+    while !q.is_empty() {
       
-        let n = Q.first().unwrap().clone();
+        let n = q.first().unwrap().clone();
     
-        Q.pop();
+        q.pop();
 
-        add_fill_node(&map, -1,  0, &n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(&map,  1,  0, &n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(&map,  0, -1, &n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(&map,  0,  1, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(&map, -1,  0, &n, &mut visited, &mut q, &mut path, range, heuristic);
+        add_fill_node(&map,  1,  0, &n, &mut visited, &mut q, &mut path, range, heuristic);
+        add_fill_node(&map,  0, -1, &n, &mut visited, &mut q, &mut path, range, heuristic);
+        add_fill_node(&map,  0,  1, &n, &mut visited, &mut q, &mut path, range, heuristic);
         
     }
 
