@@ -1,6 +1,7 @@
 use crate::*;
 
 #[derive(Copy, Clone)]
+#[allow(dead_code)]
 pub struct Unit {
     player_owned: bool,
     health: i32,
@@ -12,6 +13,7 @@ pub struct Unit {
 }
 
 //#[derive(Clone)]
+#[allow(dead_code)]
 pub struct Map {
     grid: Vec<Vec<i32>>, //2d array (2d vec) of i32 (IDs) that correspond to tile types (textures for the tiles, wall, ground, etc.)
     width: i32,
@@ -20,6 +22,7 @@ pub struct Map {
     tiles: Vec<Texture2D>, //the ID in grid[x][y] correlates to an image in this Vec. EG.: map.tiles[ map.grid[x][y] ] would access the tile image for the x y position on the map
 }
 
+#[allow(dead_code)]
 impl Map {
     fn new(grid: Vec<Vec<i32>>,
     width: i32,
@@ -52,12 +55,14 @@ impl Map {
 
 //Algorithm to get the range of possible movements for a unit
 #[derive(Clone, Copy)]
+#[allow(dead_code)]
 struct FillNode {
     x: i32,
     y: i32,
     depth: i32,
 }
 
+#[allow(dead_code)]
 impl FillNode {
     fn new(x: i32, y: i32, depth: i32) -> Self {
         FillNode {
@@ -68,7 +73,8 @@ impl FillNode {
     }
 }
 
-fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bool>, Q: &mut Vec<FillNode>, path: &mut Vec<(i32, i32)>, range: i32, heuristic: fn(i32) -> i32) {
+#[allow(dead_code)]
+fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bool>, q: &mut Vec<FillNode>, path: &mut Vec<(i32, i32)>, range: i32, heuristic: fn(i32) -> i32) {
     if n.x + dx < 0 || n.x + dx > map.width - 1 {
         return;
     }
@@ -94,32 +100,33 @@ fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bo
 
     if !visited[ ((n.x+dx) + (n.y+dy) * map.width) as usize ] {
         visited[ ((n.x+dx) + (n.y+dy) * map.width) as usize ] = true;
-        Q.push( FillNode::new(n.x+dx, n.y+dy, n.depth+h) );
+        q.push( FillNode::new(n.x+dx, n.y+dy, n.depth+h) );
         path.push( (n.x+dx, n.y+dy) );
     }
 }
 
+#[allow(dead_code)]
 fn floodfill(map: Map, start: (i32, i32), range: i32, heuristic: fn(i32) -> i32) -> Vec<(i32, i32)>{
     let mut visited: Vec<bool> = vec![];
     visited.reserve( (map.width * map.height) as usize);
     visited[ (start.0 + start.1 * map.width) as usize ] = true;
 
-    let mut Q: Vec<FillNode> = vec![];
-    Q.push( FillNode::new(start.0, start.1, 0) );
+    let mut q: Vec<FillNode> = vec![];
+    q.push( FillNode::new(start.0, start.1, 0) );
 
     let mut path: Vec<(i32, i32)> = vec![];
     path.push(start);
 
-    while !Q.is_empty() {
+    while !q.is_empty() {
       
-        let n = Q.first().unwrap().clone();
+        let n = q.first().unwrap().clone();
     
-        Q.pop();
+        q.pop();
 
-        add_fill_node(&map, -1,  0, &n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(&map,  1,  0, &n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(&map,  0, -1, &n, &mut visited, &mut Q, &mut path, range, heuristic);
-        add_fill_node(&map,  0,  1, &n, &mut visited, &mut Q, &mut path, range, heuristic);
+        add_fill_node(&map, -1,  0, &n, &mut visited, &mut q, &mut path, range, heuristic);
+        add_fill_node(&map,  1,  0, &n, &mut visited, &mut q, &mut path, range, heuristic);
+        add_fill_node(&map,  0, -1, &n, &mut visited, &mut q, &mut path, range, heuristic);
+        add_fill_node(&map,  0,  1, &n, &mut visited, &mut q, &mut path, range, heuristic);
         
     }
 

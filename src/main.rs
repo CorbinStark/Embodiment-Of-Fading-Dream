@@ -11,6 +11,7 @@ use game::*;
 use main_menu::*;
 use map_editor::*;
 use states::*;
+#[allow(unused_imports)]
 use map::*;
 
 fn main() {
