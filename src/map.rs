@@ -1,5 +1,7 @@
 use crate::*;
 
+const TILE_SIZE: i32 = 16;
+
 #[derive(Copy, Clone)]
 #[allow(dead_code)]
 pub struct Unit {
@@ -24,7 +26,22 @@ pub struct Map {
 
 #[allow(dead_code)]
 impl Map {
-    fn new(grid: Vec<Vec<i32>>,
+    pub fn create_blank(width: usize, height: usize) -> Self{
+        let mut grid: Vec<Vec<i32>> = vec![];
+        for x in 0..width {
+            for y in 0..height {
+                grid[x][y] = 0; //init all to 0
+            }
+        }
+        Map {
+            grid: grid,
+            width: width as i32,
+            height: height as i32,
+            units: vec![],
+            tiles: vec![],
+        }
+    }
+    pub fn new(grid: Vec<Vec<i32>>,
     width: i32,
     height: i32,
     units: Vec<Unit>,
@@ -37,7 +54,15 @@ impl Map {
             tiles: tiles,
         }
     }
-    fn copy(other: Map) -> Self {
+    pub fn draw(&self, d: &mut RaylibDrawHandle) {
+        for x in 0..self.width {
+            for y in 0..self.height {
+                //doing the conversions to make everything a usize so that it can index is annoying.....
+                d.draw_texture(&self.tiles[self.grid[x as usize][y as usize] as usize], x * TILE_SIZE, y * TILE_SIZE, Color::WHITE);
+            }
+        }
+    }
+    pub fn copy(other: Map) -> Self {
         Map {
             grid: other.grid,
             width: other.width,
@@ -48,21 +73,14 @@ impl Map {
     }
 }
 
-//psuedocode for drawing the map
-//for(int x = 0; x < map.width; ++x) {
-//  for(int y = 0; y < map.height; ++y) {
-//      draw_texture(map.tiles[ map.grid[x][y] ], x * tile_size, y * tile_size);
-
 //Algorithm to get the range of possible movements for a unit
 #[derive(Clone, Copy)]
-#[allow(dead_code)]
 struct FillNode {
     x: i32,
     y: i32,
     depth: i32,
 }
 
-#[allow(dead_code)]
 impl FillNode {
     fn new(x: i32, y: i32, depth: i32) -> Self {
         FillNode {
@@ -73,7 +91,6 @@ impl FillNode {
     }
 }
 
-#[allow(dead_code)]
 fn add_fill_node(map: &Map, dx: i32, dy: i32, n: &FillNode, visited: &mut Vec<bool>, q: &mut Vec<FillNode>, path: &mut Vec<(i32, i32)>, range: i32, heuristic: fn(i32) -> i32) {
     if n.x + dx < 0 || n.x + dx > map.width - 1 {
         return;
@@ -118,16 +135,13 @@ fn floodfill(map: Map, start: (i32, i32), range: i32, heuristic: fn(i32) -> i32)
     path.push(start);
 
     while !q.is_empty() {
-      
         let n = q.first().unwrap().clone();
-    
         q.pop();
 
         add_fill_node(&map, -1,  0, &n, &mut visited, &mut q, &mut path, range, heuristic);
         add_fill_node(&map,  1,  0, &n, &mut visited, &mut q, &mut path, range, heuristic);
         add_fill_node(&map,  0, -1, &n, &mut visited, &mut q, &mut path, range, heuristic);
         add_fill_node(&map,  0,  1, &n, &mut visited, &mut q, &mut path, range, heuristic);
-        
     }
 
     path
