@@ -1,4 +1,5 @@
 use raylib::prelude::*;
+use rand::*;
 
 //State rs file includes
 mod game;
@@ -6,11 +7,13 @@ mod main_menu;
 mod map_editor;
 mod states;
 mod map;
+mod unit;
 
 use game::*;
 use main_menu::*;
 use map_editor::*;
 use states::*;
+use unit::*;
 #[allow(unused_imports)]
 use map::*;
 

@@ -2,17 +2,6 @@ use crate::*;
 
 const TILE_SIZE: i32 = 16;
 
-#[derive(Copy, Clone)]
-#[allow(dead_code)]
-pub struct Unit {
-    player_owned: bool,
-    health: i32,
-    maxhealth: i32,
-    damage: i32,
-    moverange: i32,
-    attackrange: i32,
-    //whatever else a unit needs
-}
 
 //#[derive(Clone)]
 #[allow(dead_code)]
