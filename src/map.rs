@@ -5,13 +5,13 @@ const TILE_SIZE: i32 = 16;
 //#[derive(Clone)]
 #[allow(dead_code)]
 pub struct Map {
-    grid: Vec<Vec<i32>>, //2d array (2d vec) of i32 (IDs) that correspond to tile types (textures for the tiles, wall, ground, etc.)
-    width: i32,
-    height: i32,
-    x: i32,
-    y: i32,
-    units: Vec<Unit>,
-    tiles: Texture2D, //the ID in grid[x][y] correlates to an image in this Vec. EG.: map.tiles[ map.grid[x][y] ] would access the tile image for the x y position on the map
+    pub grid: Vec<Vec<i32>>, //2d array (2d vec) of i32 (IDs) that correspond to tile types (textures for the tiles, wall, ground, etc.)
+    pub width: i32,
+    pub height: i32,
+    pub x: i32,
+    pub y: i32,
+    pub units: Vec<Unit>,
+    pub tiles: Texture2D,
 }
 
 #[allow(dead_code)]
@@ -20,7 +20,7 @@ impl Map {
         let mut grid: Vec<Vec<i32>> = vec![];
         grid.resize(width, vec![]);
         for x in 0..width {
-            grid[x].resize(height, 0);
+            grid[x].resize(height, 78);
         }
         Map {
             grid: grid,
