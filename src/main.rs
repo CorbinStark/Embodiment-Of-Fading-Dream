@@ -1,21 +1,21 @@
-use raylib::prelude::*;
 use rand::*;
+use raylib::prelude::*;
 
 //State rs file includes
 mod game;
 mod main_menu;
+mod map;
 mod map_editor;
 mod states;
-mod map;
 mod unit;
 
 use game::*;
 use main_menu::*;
+#[allow(unused_imports)]
+use map::*;
 use map_editor::*;
 use states::*;
 use unit::*;
-#[allow(unused_imports)]
-use map::*;
 
 fn main() {
     //Initialize window and global settings
@@ -26,9 +26,9 @@ fn main() {
     rl.set_target_fps(60);
 
     //Initialize states
-    let game        = Box::new(Game::new(&mut rl, &mut thread));
-    let map_editor  = Box::new(MapEditor::new(&mut rl, &mut thread));
-    let main_menu   = Box::new(MainMenu::new(&mut rl, &mut thread));
+    let game = Box::new(Game::new(&mut rl, &mut thread));
+    let map_editor = Box::new(MapEditor::new(&mut rl, &mut thread));
+    let main_menu = Box::new(MainMenu::new(&mut rl, &mut thread));
 
     //Add states to the state manager
     //State 0 is NO_STATE_CHANGE

@@ -229,9 +229,9 @@ pub fn combat(unit: &mut Unit, unit2: &mut Unit, range: i32) -> i32 {
         if damage > 0 {
             unit2.health -= damage;
             println!(
-            "The {} hits the {} for {} damage, leaving them with {} health!",
-            unit.name, unit2.name, damage, unit2.health
-        );
+                "The {} hits the {} for {} damage, leaving them with {} health!",
+                unit.name, unit2.name, damage, unit2.health
+            );
         } else {
             println!(
                 "The {}'s attack can't get through the {}'s armor!",

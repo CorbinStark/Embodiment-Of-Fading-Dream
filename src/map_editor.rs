@@ -21,9 +21,9 @@ impl State for MapEditor {
         if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
             let mouse = rl.get_mouse_position();
             //if mouse position is on top of a unit
-                //if unit isnt player owned
-                    //if unit is on a valid attack tile
-                        //attack it!
+            //if unit isnt player owned
+            //if unit is on a valid attack tile
+            //attack it!
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F1) {
             if self.state == TILES {
@@ -33,12 +33,16 @@ impl State for MapEditor {
             }
         }
 
-        let mut clicked_tileset:  bool = false;
+        let mut clicked_tileset: bool = false;
         let mut hovering_tileset: bool = false;
         let clicked: bool = rl.is_mouse_button_down(MouseButton::MOUSE_LEFT_BUTTON);
 
         if self.state == TILES {
-            if mouse.x > 0.0 && mouse.y > 0.0 && mouse.x < self.map.tiles.width as f32 && mouse.y < self.map.tiles.height as f32 {
+            if mouse.x > 0.0
+                && mouse.y > 0.0
+                && mouse.x < self.map.tiles.width as f32
+                && mouse.y < self.map.tiles.height as f32
+            {
                 hovering_tileset = true;
             }
             if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) && hovering_tileset {
@@ -58,18 +62,36 @@ impl State for MapEditor {
             let tile_x = (mouse.x / TILE_SIZE) as i32;
             let tile_y = (mouse.y / TILE_SIZE) as i32;
             if hovering_tileset {
-                d.draw_rectangle(tile_x * TILE_SIZE as i32, tile_y * TILE_SIZE as i32, TILE_SIZE as i32, TILE_SIZE as i32, Color::GREEN);
+                d.draw_rectangle(
+                    tile_x * TILE_SIZE as i32,
+                    tile_y * TILE_SIZE as i32,
+                    TILE_SIZE as i32,
+                    TILE_SIZE as i32,
+                    Color::GREEN,
+                );
             }
             if clicked_tileset {
                 self.selected_tile = tile_x + tile_y * 10;
             }
             let src_x: f32 = (self.selected_tile % 10) as f32 * TILE_SIZE;
             let src_y: f32 = (self.selected_tile / 10) as f32 * TILE_SIZE;
-            d.draw_rectangle(src_x as i32, src_y as i32, TILE_SIZE as i32, TILE_SIZE as i32, Color::RED);
+            d.draw_rectangle(
+                src_x as i32,
+                src_y as i32,
+                TILE_SIZE as i32,
+                TILE_SIZE as i32,
+                Color::RED,
+            );
         } else if self.state == PLACE {
             let tile_x = (mouse.x / TILE_SIZE) as i32;
             let tile_y = (mouse.y / TILE_SIZE) as i32;
-            d.draw_rectangle(tile_x * TILE_SIZE as i32, tile_y * TILE_SIZE as i32, TILE_SIZE as i32, TILE_SIZE as i32, Color::GREEN);
+            d.draw_rectangle(
+                tile_x * TILE_SIZE as i32,
+                tile_y * TILE_SIZE as i32,
+                TILE_SIZE as i32,
+                TILE_SIZE as i32,
+                Color::GREEN,
+            );
             if clicked {
                 //place tile
                 self.map.grid[tile_x as usize][tile_y as usize] = self.selected_tile;
@@ -79,7 +101,7 @@ impl State for MapEditor {
         //Return state change = false
         NO_STATE_CHANGE
     }
-    
+
     fn leave(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
 }
 
