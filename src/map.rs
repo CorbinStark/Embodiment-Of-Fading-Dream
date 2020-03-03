@@ -126,6 +126,7 @@ pub fn floodfill(
 
     while !q.is_empty() {
         let n = q.last().unwrap().clone();
+        q.pop();
 
         add_fill_node(
             &map,
@@ -171,7 +172,6 @@ pub fn floodfill(
             range,
             heuristic,
         );
-        q.pop();
     }
 
     path

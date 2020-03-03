@@ -22,7 +22,7 @@ fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &Vec<(i32, i32)>) {
 
 impl State for Game {
     fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {
-        self.tiles = floodfill(&self.map, (8, 15), 15, move_heuristic);
+        self.tiles = floodfill(&self.map, (8, 15), 4, move_heuristic);
     }
 
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
