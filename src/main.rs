@@ -11,7 +11,6 @@ mod unit;
 
 use game::*;
 use main_menu::*;
-#[allow(unused_imports)]
 use map::*;
 use map_editor::*;
 use states::*;

@@ -106,15 +106,14 @@ fn add_fill_node(
 }
 
 #[allow(dead_code)]
-fn floodfill(
-    map: Map,
+pub fn floodfill(
+    map: &Map,
     start: (i32, i32),
     range: i32,
     heuristic: fn(i32) -> i32,
 ) -> Vec<(i32, i32)> {
     //Set up visited array
-    let mut visited: Vec<bool> = vec![];
-    visited.reserve((map.width * map.height) as usize);
+    let mut visited: Vec<bool> = vec![false; (map.width * map.height) as usize];
     visited[(start.0 + start.1 * map.width) as usize] = true;
 
     //Set up queue
@@ -126,8 +125,7 @@ fn floodfill(
     path.push(start);
 
     while !q.is_empty() {
-        let n = q.first().unwrap().clone();
-        q.pop();
+        let n = q.last().unwrap().clone();
 
         add_fill_node(
             &map,
@@ -173,6 +171,7 @@ fn floodfill(
             range,
             heuristic,
         );
+        q.pop();
     }
 
     path
