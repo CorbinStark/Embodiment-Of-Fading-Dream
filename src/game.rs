@@ -14,9 +14,17 @@ fn move_heuristic(id: i32) -> i32 {
     1 //1 is default cost if not defined
 }
 
-fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &Vec<(i32, i32)>) {
+//Was very iffy about changing this but things still work. Apparently this will allow it to work with non Vec-based slices according to clippy
+fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &[(i32, i32)]) {
+    //changed from being &Vec<(i32, i32)>
     for tuple in tiles {
-        d.draw_rectangle(tuple.0 * TILE_SIZE, tuple.1 * TILE_SIZE, TILE_SIZE, TILE_SIZE, Color::from((100, 100, 255, 100)));
+        d.draw_rectangle(
+            tuple.0 * TILE_SIZE,
+            tuple.1 * TILE_SIZE,
+            TILE_SIZE,
+            TILE_SIZE,
+            Color::from((100, 100, 255, 100)),
+        );
     }
 }
 
