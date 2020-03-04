@@ -15,6 +15,7 @@ pub struct Map {
 }
 
 #[allow(dead_code)]
+#[allow(clippy::needless_range_loop)]
 impl Map {
     pub fn new(
         width: usize,
@@ -28,7 +29,7 @@ impl Map {
             grid[x].resize(height, 78);
         }
         Map {
-            grid: grid,
+            grid,
             width: width as i32,
             height: height as i32,
             x: 0,
@@ -65,14 +66,10 @@ struct FillNode {
 
 impl FillNode {
     fn new(x: i32, y: i32, depth: i32) -> Self {
-        FillNode {
-            x: x,
-            y: y,
-            depth: depth,
-        }
+        FillNode { x, y, depth }
     }
 }
-
+#[allow(clippy::too_many_arguments)] //Perhaps fix this later with another func or struct so we don't need an exception.
 fn add_fill_node(
     map: &Map,
     dx: i32,
@@ -125,7 +122,7 @@ pub fn floodfill(
     path.push(start);
 
     while !q.is_empty() {
-        let n = q.last().unwrap().clone();
+        let n = *q.last().unwrap(); //.clone(); //Cloneing was uneeded since we could dereference with * instead, this should work.
         q.pop();
 
         add_fill_node(

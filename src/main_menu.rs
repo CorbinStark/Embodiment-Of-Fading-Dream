@@ -15,7 +15,7 @@ impl State for MainMenu {
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
         //USER INPUT
         if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {
-            self.current = self.current + 1;
+            self.current += 1;
             if self.current > self.options.len() as u16 - 1 {
                 self.current = 0;
             }
@@ -24,7 +24,7 @@ impl State for MainMenu {
             if self.current == 0 {
                 self.current = self.options.len() as u16;
             }
-            self.current = self.current - 1;
+            self.current -= 1;
         }
         //Select current menu option
         if rl.is_key_pressed(KeyboardKey::KEY_ENTER) {

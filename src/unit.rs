@@ -66,12 +66,13 @@ impl Unit {
     //
     //Constructors for various unit types
     //
+    #[allow(dead_code)]
     pub fn new(player_owned: bool) -> Self {
         Unit {
             id: 0,
             name: "Default".to_string(),
 
-            player_owned: player_owned,
+            player_owned,
             alive: true,
             counter: true,
 
@@ -85,12 +86,13 @@ impl Unit {
             basehit: 0,
         }
     }
+    #[allow(dead_code)]
     pub fn new_sword(player_owned: bool) -> Self {
         Unit {
             id: 1,
             name: "Swordsman".to_string(),
 
-            player_owned: player_owned,
+            player_owned,
             alive: true,
             counter: true,
 
@@ -104,12 +106,13 @@ impl Unit {
             basehit: 90,
         }
     }
+    #[allow(dead_code)]
     pub fn new_knight(player_owned: bool) -> Self {
         Unit {
             id: 2,
             name: "Knight".to_string(),
 
-            player_owned: player_owned,
+            player_owned,
             alive: true,
             counter: true,
 
@@ -123,12 +126,13 @@ impl Unit {
             basehit: 90,
         }
     }
+    #[allow(dead_code)]
     pub fn new_archer(player_owned: bool) -> Self {
         Unit {
             id: 3,
             name: "Archer".to_string(),
 
-            player_owned: player_owned,
+            player_owned,
             alive: true,
             counter: false,
 
@@ -142,6 +146,8 @@ impl Unit {
             basehit: 80,
         }
     }
+    #[allow(dead_code)]
+    #[allow(clippy::too_many_arguments)] //Very large function, requires the exception if we aren't reducing it.
     pub fn new_custom(
         id: i32,
         name: &str,
@@ -158,21 +164,21 @@ impl Unit {
         basehit: i32,
     ) -> Self {
         Unit {
-            id: id,
+            id,
             name: name.to_string(),
 
-            player_owned: player_owned,
-            alive: alive,
-            counter: counter,
+            player_owned,
+            alive,
+            counter,
 
-            maxhealth: maxhealth,
-            health: health,
-            moverange: moverange,
-            attackrange: attackrange,
-            armor: armor,
-            maxdamage: maxdamage,
-            mindamage: mindamage,
-            basehit: basehit,
+            maxhealth,
+            health,
+            moverange,
+            attackrange,
+            armor,
+            maxdamage,
+            mindamage,
+            basehit,
         }
     }
 
@@ -182,6 +188,7 @@ impl Unit {
 
     //this function is both a setter and a getter. It checks if a unit is dead,
     //if they aren't it checks if they should be, and sets them as dead accordingly
+    #[allow(dead_code)]
     pub fn is_alive(&mut self) -> bool {
         if self.alive && self.health > 0 {
             return true;
@@ -191,19 +198,20 @@ impl Unit {
         }
         if self.health <= 0 {
             self.alive = false;
-            return false;
+            false
         } else {
-            return true;
+            true
         }
     }
 
     //generates hit damage, returns -1 to indicate attack missing
+    #[allow(dead_code)]
     pub fn get_damage(&self) -> i32 {
         let mut rnjesus = rand::thread_rng();
         if rnjesus.gen_range(1, 100) <= self.basehit {
-            return rnjesus.gen_range(self.mindamage, self.maxdamage);
+            rnjesus.gen_range(self.mindamage, self.maxdamage)
         } else {
-            return -1;
+            -1
         }
     }
 }
@@ -216,6 +224,7 @@ impl Unit {
 //
 //Unit is the attacking unit, unit2 is the defending unit
 //returns 0 for no units killed, 1 for defending unit killed, and 2 for attacking unit killed
+#[allow(dead_code)]
 pub fn combat(unit: &mut Unit, unit2: &mut Unit, range: i32) -> i32 {
     assert_eq!(unit.is_alive(), true, "Attacking unit isn't alive");
     assert_eq!(unit2.is_alive(), true, "Defending unit isn't alive");
@@ -265,19 +274,19 @@ pub fn combat(unit: &mut Unit, unit2: &mut Unit, range: i32) -> i32 {
             }
             if unit.is_alive() {
                 println!("The combat ends.");
-                return 0;
+                0
             } else {
                 println!("The attacking {} is killed!", unit.name);
-                return 2;
+                2
             }
         } else {
             println!("The defending {} is unable to strike back.", unit2.name);
             println!("The combat ends.");
-            return 0;
+            0
         }
     } else {
         println!("The defending {} is killed!", unit2.name);
         println!("The combat ends.");
-        return 1;
+        1
     }
 }
