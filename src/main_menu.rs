@@ -2,7 +2,7 @@ use crate::*;
 
 pub struct MainMenu {
     options: Vec<String>,
-    current: u16,
+    current: i16,
     mask: Texture2D,
     bg: Texture2D,
     bg_pos: Vector2,
@@ -10,24 +10,26 @@ pub struct MainMenu {
 }
 
 impl State for MainMenu {
-    fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
+    fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {
+        self.current = -1;
+    }
 
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
         //USER INPUT
         if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {
             self.current += 1;
-            if self.current > self.options.len() as u16 - 1 {
+            if self.current > self.options.len() as i16 - 1 {
                 self.current = 0;
             }
         }
         if rl.is_key_pressed(KeyboardKey::KEY_UP) {
-            if self.current == 0 {
-                self.current = self.options.len() as u16;
+            if self.current <= 0 {
+                self.current = self.options.len() as i16;
             }
             self.current -= 1;
         }
         //Select current menu option
-        if rl.is_key_pressed(KeyboardKey::KEY_ENTER) {
+        if rl.is_key_released(KeyboardKey::KEY_ENTER) {
             //If selected play game
             if self.current == 0 {
                 return 2;
@@ -64,7 +66,7 @@ impl State for MainMenu {
         d.draw_text("Dream", 50, 75, 55, Color::WHITE);
 
         for i in 0..self.options.len() {
-            if i as u16 == self.current {
+            if i as i16 == self.current {
                 d.draw_text(
                     &self.options[i][..],
                     55,
