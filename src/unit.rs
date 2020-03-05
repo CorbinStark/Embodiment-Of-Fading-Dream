@@ -1,51 +1,13 @@
 use crate::*;
 
-/* enums don't seem to work the way I want them to, so shelving for now
-#[derive(Copy, Clone)]
-#[allow(dead_code)]
-
-pub enum Class {
-    sword {
-        maxhealth = 20,
-        moverange = 5,
-        attackrange: 1,
-
-        armor = 1,   //resists from attack damage
-        maxdamage = 8,
-        mindamage = 5,
-        basehit = 90, //percent hit
-        counter = true, //can autoattack after being attacked, assuming in range
-    },
-    bow {
-        maxhealth = 15,
-        moverange = 4,
-        attackrange = 2,
-
-        armor = 0,
-        maxdamage = 10,
-        mindamage = 7,
-        basehit = 80,
-        counter = false,
-
-    },
-    knight {
-        maxhealth = 15,
-        moverange = 3,
-        attackrange = 1,
-
-        armor = 5,
-        maxdamage = 6,
-        mindamage = 5,
-        basehit = 90,
-        counter = true,
-    }
-}*/
-
 #[derive(Clone)]
 #[allow(dead_code)]
 pub struct Unit {
     id: i32, //for texture drawing
+    currentframe: i32, //to get image, refer to images[(ID * 4) + currentframe]
     name: String,
+    x: i32,
+    y: i32,
 
     player_owned: bool,
     alive: bool,
@@ -59,6 +21,7 @@ pub struct Unit {
     maxdamage: i32,
     mindamage: i32,
     basehit: i32,
+
     //whatever else a unit needs
 }
 
@@ -70,7 +33,10 @@ impl Unit {
     pub fn new(player_owned: bool) -> Self {
         Unit {
             id: 0,
+            currentframe: 0,
             name: "Default".to_string(),
+            x: 0,
+            y: 0,
 
             player_owned,
             alive: true,
@@ -84,66 +50,6 @@ impl Unit {
             maxdamage: 0,
             mindamage: 0,
             basehit: 0,
-        }
-    }
-    #[allow(dead_code)]
-    pub fn new_sword(player_owned: bool) -> Self {
-        Unit {
-            id: 1,
-            name: "Swordsman".to_string(),
-
-            player_owned,
-            alive: true,
-            counter: true,
-
-            maxhealth: 20,
-            health: 20,
-            moverange: 5,
-            attackrange: 1,
-            armor: 2,
-            maxdamage: 8,
-            mindamage: 5,
-            basehit: 90,
-        }
-    }
-    #[allow(dead_code)]
-    pub fn new_knight(player_owned: bool) -> Self {
-        Unit {
-            id: 2,
-            name: "Knight".to_string(),
-
-            player_owned,
-            alive: true,
-            counter: true,
-
-            maxhealth: 20,
-            health: 20,
-            moverange: 3,
-            attackrange: 1,
-            armor: 5,
-            maxdamage: 5,
-            mindamage: 1,
-            basehit: 90,
-        }
-    }
-    #[allow(dead_code)]
-    pub fn new_archer(player_owned: bool) -> Self {
-        Unit {
-            id: 3,
-            name: "Archer".to_string(),
-
-            player_owned,
-            alive: true,
-            counter: false,
-
-            maxhealth: 15,
-            health: 15,
-            moverange: 4,
-            attackrange: 2,
-            armor: 0,
-            maxdamage: 10,
-            mindamage: 6,
-            basehit: 80,
         }
     }
     #[allow(dead_code)]
@@ -165,7 +71,10 @@ impl Unit {
     ) -> Self {
         Unit {
             id,
+            currentframe: 0,
             name: name.to_string(),
+            x: 0,
+            y: 0,
 
             player_owned,
             alive,
@@ -213,6 +122,14 @@ impl Unit {
         } else {
             -1
         }
+    }
+
+    pub fn draw(&self, d: &mut RaylibDrawHandle, images: &Vec<Texture2D>) {
+        d.draw_texture(&images[((self.id * 4) + self.currentframe) as usize], self.x, self.y, Color::WHITE);
+    }
+
+    pub fn ismoused(&self, mouse: Vector2, tile_size: f32, scale: f32) -> bool {
+        mouse.x > self.x as f32 && mouse.y > self.y as f32 && mouse.x < self.x as f32 + (tile_size * scale) && mouse.y < self.y as f32 + (tile_size * scale)
     }
 }
 

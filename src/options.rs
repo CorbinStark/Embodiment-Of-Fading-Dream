@@ -32,18 +32,18 @@ impl State for Options {
         if rl.is_key_pressed(KeyboardKey::KEY_ENTER) {
             //If selected 640x480 resolution
             if self.current == 0 {
-                rl.set_window_size(640,480);
-               // return 2;
+                rl.set_window_size(640, 480);
+                // return 2;
             }
             //If selected 800x600 resolution
             if self.current == 1 {
-                rl.set_window_size(800,600);
-               // return 3;
+                rl.set_window_size(800, 600);
+                // return 3;
             }
             //If 960x720 resolution
             if self.current == 2 {
-                rl.set_window_size(960,720);
-               // return 4;
+                rl.set_window_size(960, 720);
+                // return 4;
             }
             //If selected return to menu
             if self.current == 3 {
