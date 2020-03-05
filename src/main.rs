@@ -6,14 +6,15 @@ mod game;
 mod main_menu;
 mod map;
 mod map_editor;
+mod options;
 mod states;
 mod unit;
-mod options;
 
 use game::*;
 use main_menu::*;
 use map::*;
 use map_editor::*;
+use options::*;
 use states::*;
 use unit::*;
 use options::*;

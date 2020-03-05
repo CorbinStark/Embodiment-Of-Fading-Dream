@@ -1,10 +1,18 @@
 use crate::*;
 
 const TILE_SIZE: i32 = 16;
+const SCALE: i32 = 3;
+
+const IDLE_STATE: i32 = 0;
+const MOVE_STATE: i32 = 1;
+const ATTACK_STATE: i32 = 2;
+const WAITING_STATE: i32 = 3;
+const MENU_STATE: i32 = 4;
 
 pub struct Game {
     map: Map,
     tiles: Vec<(i32, i32)>,
+    state: i32,
 }
 
 fn move_heuristic(id: i32) -> i32 {
@@ -39,12 +47,30 @@ impl State for Game {
             //Go back to main menu on escape
             return 1;
         }
+        let mouse = rl.get_mouse_position();
+        if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {}
+
+        if self.state == IDLE_STATE {
+        if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
+            //if mouse position is on top of a unit
+            for unit in &self.map.units {
+                if unit.ismoused(mouse, TILE_SIZE as f32, SCALE as f32) {
+                    
+                }
+            }
+            //if unit isnt player owned
+            //if unit is on a valid attack tile
+            //attack it!
+        }
+    }
 
         //DRAWING
         let mut d = rl.begin_drawing(&thread);
         d.clear_background(Color::RAYWHITE);
         self.map.draw(&mut d);
-        draw_tiles(&mut d, &self.tiles);
+        if self.state == MOVE_STATE {
+            draw_tiles(&mut d, &self.tiles);
+        }
         d.draw_fps(20, 20);
 
         //Return state change = false
@@ -59,6 +85,7 @@ impl Game {
         Game {
             map: Map::new(25, 25, rl, thread),
             tiles: vec![],
+            state: IDLE_STATE,
         }
     }
 }

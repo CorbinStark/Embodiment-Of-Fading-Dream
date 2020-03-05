@@ -1,6 +1,7 @@
 use crate::*;
 
 const TILE_SIZE: i32 = 16;
+const SCALE: f32 = 3.0;
 
 //#[derive(Clone)]
 #[allow(dead_code)]
@@ -12,6 +13,7 @@ pub struct Map {
     pub y: i32,
     pub units: Vec<Unit>,
     pub tiles: Texture2D,
+    pub sprites: Vec<Texture2D>,
 }
 
 #[allow(dead_code)]
@@ -36,6 +38,7 @@ impl Map {
             y: 0,
             units: vec![],
             tiles: rl.load_texture(thread, "art/Dungeon_Tileset.png").unwrap(),
+            sprites: vec![],
         }
     }
     pub fn draw(&self, d: &mut RaylibDrawHandle) {
@@ -49,9 +52,24 @@ impl Map {
                     TILE_SIZE as f32,
                     TILE_SIZE as f32,
                 );
-                let position = Vector2::new((x * TILE_SIZE) as f32, (y * TILE_SIZE) as f32);
-                d.draw_texture_rec(&self.tiles, source, position, Color::WHITE);
+                let dest = Rectangle::new(
+                    (x * (TILE_SIZE as f32 * SCALE) as i32) as f32,
+                    (y * (TILE_SIZE as f32 * SCALE) as i32) as f32,
+                    TILE_SIZE as f32 * SCALE,
+                    TILE_SIZE as f32 * SCALE,
+                );
+                d.draw_texture_pro(
+                    &self.tiles,
+                    source,
+                    dest,
+                    Vector2::new(0.0, 0.0),
+                    0.0,
+                    Color::WHITE,
+                );
             }
+        }
+        for unit in &self.units {
+            unit.draw(d, &self.sprites);
         }
     }
 }

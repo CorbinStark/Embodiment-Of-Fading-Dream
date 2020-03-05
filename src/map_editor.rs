@@ -5,6 +5,7 @@ const TILES: u8 = 1;
 #[allow(dead_code)]
 const UNITS: u8 = 2;
 const TILE_SIZE: f32 = 16.0;
+const SCALE: f32 = 3.0;
 
 pub struct MapEditor {
     map: Map,
@@ -85,13 +86,13 @@ impl State for MapEditor {
                 Color::RED,
             );
         } else if self.state == PLACE {
-            let tile_x = (mouse.x / TILE_SIZE) as i32;
-            let tile_y = (mouse.y / TILE_SIZE) as i32;
+            let tile_x = (mouse.x / (TILE_SIZE * SCALE)) as i32;
+            let tile_y = (mouse.y / (TILE_SIZE * SCALE)) as i32;
             d.draw_rectangle(
-                tile_x * TILE_SIZE as i32,
-                tile_y * TILE_SIZE as i32,
-                TILE_SIZE as i32,
-                TILE_SIZE as i32,
+                tile_x * (TILE_SIZE * SCALE) as i32,
+                tile_y * (TILE_SIZE * SCALE) as i32,
+                (TILE_SIZE * SCALE) as i32,
+                (TILE_SIZE * SCALE) as i32,
                 Color::GREEN,
             );
             if clicked {
