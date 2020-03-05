@@ -76,7 +76,7 @@ fn add_fill_node(
     dy: i32,
     n: &FillNode,
     visited: &mut Vec<bool>,
-    q: &mut Vec<FillNode>,
+    q: &mut VecDeque<FillNode>,
     path: &mut Vec<(i32, i32)>,
     range: i32,
     heuristic: fn(i32) -> i32,
@@ -97,7 +97,7 @@ fn add_fill_node(
 
     if !visited[((n.x + dx) + (n.y + dy) * map.width) as usize] {
         visited[((n.x + dx) + (n.y + dy) * map.width) as usize] = true;
-        q.push(FillNode::new(n.x + dx, n.y + dy, n.depth + h));
+        q.push_back(FillNode::new(n.x + dx, n.y + dy, n.depth + h));
         path.push((n.x + dx, n.y + dy));
     }
 }
@@ -111,20 +111,19 @@ pub fn floodfill(
 ) -> Vec<(i32, i32)> {
     //Set up visited array
     let mut visited: Vec<bool> = vec![false; (map.width * map.height) as usize];
-    visited[(start.0 + start.1 * map.width) as usize] = true;
+    visited[(start.0 + start.1 * map.width) as usize] = false;
 
     //Set up queue
-    let mut q: Vec<FillNode> = vec![];
-    q.push(FillNode::new(start.0, start.1, 0));
+    //let mut q: Vec<FillNode> = vec![];
+    let mut q = VecDeque::new();
+    q.push_back(FillNode::new(start.0, start.1, 0));
 
     //set up result path
     let mut path: Vec<(i32, i32)> = vec![];
     path.push(start);
-
     while !q.is_empty() {
-        let n = *q.last().unwrap(); //.clone(); //Cloneing was uneeded since we could dereference with * instead, this should work.
-        q.pop();
-
+        let n = *q.front().unwrap(); //.clone(); //Cloneing was uneeded since we could dereference with * instead, this should work.
+        q.pop_front();
         add_fill_node(
             &map,
             -1,

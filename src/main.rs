@@ -17,6 +17,7 @@ use map_editor::*;
 use states::*;
 use unit::*;
 use options::*;
+use std::collections::VecDeque;
 
 fn main() {
     //Initialize window and global settings
