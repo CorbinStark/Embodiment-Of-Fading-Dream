@@ -214,3 +214,71 @@ pub fn combat(unit: &mut Unit, unit2: &mut Unit, range: i32) -> i32 {
         1
     }
 }
+pub fn print_possible_combat_results(unit: &mut Unit, unit2: &mut Unit, range: i32) -> bool {
+    assert_eq!(unit.is_alive(), true, "Attacking unit isn't alive");
+    assert_eq!(unit2.is_alive(), true, "Defending unit isn't alive");
+
+    //Defending unit can't counter attack for some reason
+    if !unit2.counter || range > unit2.attackrange {
+        let mut attack_max_damage = unit.maxdamage - unit2.armor;
+        let mut attack_min_damage = unit.mindamage - unit2.armor;
+        //correct negative damage for display
+        if attack_max_damage < 0  {
+            attack_max_damage = 0;
+        }
+        if attack_min_damage < 0  {
+            attack_min_damage = 0;
+        }
+        
+        let def_max_health = unit2.health - attack_min_damage;
+        let def_min_health = unit2.health - attack_max_damage;
+        println!("Attacker: {}\nCurrent Health: {}\nPossible Damage: {} - {}\nPossible Remaining Health: {}\n\nDefender: {}\nCurrent Health: {}\nPossible Damage: N/A\nPossible Remaining Health: {} - {}",
+        unit.name,
+        unit.health,
+        attack_min_damage,
+        attack_max_damage,
+        unit.health,
+        unit2.name,
+        unit2.health,
+        def_min_health,
+        def_max_health,
+        );
+    } else {
+        let mut attack_max_damage = unit.maxdamage - unit2.armor;
+        let mut attack_min_damage = unit.mindamage - unit2.armor;
+        let mut def_max_damage = unit2.maxdamage - unit.armor;
+        let mut def_min_damage = unit2.mindamage - unit.armor;
+        //correct negative damage for display
+        if attack_max_damage < 0  {
+            attack_max_damage = 0;
+        }
+        if attack_min_damage < 0  {
+            attack_min_damage = 0;
+        }
+        if def_max_damage < 0  {
+            def_max_damage = 0;
+        }
+        if def_min_damage < 0  {
+            def_min_damage = 0;
+        }
+        let attack_max_health = unit.health - def_min_damage;
+        let attack_min_health = unit.health - def_max_damage;
+        let def_max_health = unit2.health - attack_min_damage;
+        let def_min_health = unit2.health - attack_max_damage;
+        println!("Attacker: {}\nCurrent Health: {}\nPossible Damage: {} - {}\nPossible Remaining Health: {} - {}\n\nDefender: {}\nCurrent Health: {}\nPossible Damage: {} - {}\nPossible Remaining Health: {} - {}\n\n",
+        unit.name,
+        unit.health,
+        attack_min_damage,
+        attack_max_damage,
+        attack_min_health,
+        attack_max_health,
+        unit2.name,
+        unit2.health,
+        def_min_damage,
+        def_max_damage,
+        def_min_health,
+        def_max_health,
+        );
+    }
+    return true;
+}
