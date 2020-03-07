@@ -3,25 +3,24 @@ use crate::*;
 #[derive(Clone)]
 #[allow(dead_code)]
 pub struct Unit {
-    id: i32, //for texture drawing
+    id: i32,           //for texture drawing
     currentframe: i32, //to get image, refer to images[(ID * 4) + currentframe]
     name: String,
-    x: i32,
-    y: i32,
+    pub x: i32,
+    pub y: i32,
 
-    player_owned: bool,
+    pub player_owned: bool,
     alive: bool,
     counter: bool,
 
     health: i32,
     maxhealth: i32,
-    moverange: i32,
-    attackrange: i32,
+    pub moverange: i32,
+    pub attackrange: i32,
     armor: i32,
     maxdamage: i32,
     mindamage: i32,
     basehit: i32,
-
     //whatever else a unit needs
 }
 
@@ -125,11 +124,19 @@ impl Unit {
     }
 
     pub fn draw(&self, d: &mut RaylibDrawHandle, images: &Vec<Texture2D>) {
-        d.draw_texture(&images[((self.id * 4) + self.currentframe) as usize], self.x, self.y, Color::WHITE);
+        d.draw_texture(
+            &images[((self.id * 4) + self.currentframe) as usize],
+            self.x,
+            self.y,
+            Color::WHITE,
+        );
     }
 
     pub fn ismoused(&self, mouse: Vector2, tile_size: f32, scale: f32) -> bool {
-        mouse.x > self.x as f32 && mouse.y > self.y as f32 && mouse.x < self.x as f32 + (tile_size * scale) && mouse.y < self.y as f32 + (tile_size * scale)
+        mouse.x > self.x as f32
+            && mouse.y > self.y as f32
+            && mouse.x < self.x as f32 + (tile_size * scale)
+            && mouse.y < self.y as f32 + (tile_size * scale)
     }
 }
 
