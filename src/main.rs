@@ -1,21 +1,24 @@
-use raylib::prelude::*;
 use rand::*;
+use raylib::prelude::*;
 
 //State rs file includes
 mod game;
 mod main_menu;
-mod map_editor;
-mod states;
 mod map;
+mod map_editor;
+mod options;
+mod states;
 mod unit;
 
 use game::*;
 use main_menu::*;
-use map_editor::*;
-use states::*;
-use unit::*;
-#[allow(unused_imports)]
 use map::*;
+use map_editor::*;
+use options::*;
+use options::*;
+use states::*;
+use std::collections::VecDeque;
+use unit::*;
 
 fn main() {
     //Initialize window and global settings
@@ -26,9 +29,10 @@ fn main() {
     rl.set_target_fps(60);
 
     //Initialize states
-    let game        = Box::new(Game::new(&mut rl, &mut thread));
-    let map_editor  = Box::new(MapEditor::new(&mut rl, &mut thread));
-    let main_menu   = Box::new(MainMenu::new(&mut rl, &mut thread));
+    let game = Box::new(Game::new(&mut rl, &mut thread));
+    let map_editor = Box::new(MapEditor::new(&mut rl, &mut thread));
+    let main_menu = Box::new(MainMenu::new(&mut rl, &mut thread));
+    let options = Box::new(Options::new(&mut rl, &mut thread));
 
     //Add states to the state manager
     //State 0 is NO_STATE_CHANGE
@@ -36,6 +40,7 @@ fn main() {
     add_state(&mut statelist, &mut thread, &mut rl, main_menu); //state 1
     add_state(&mut statelist, &mut thread, &mut rl, game); //state 2
     add_state(&mut statelist, &mut thread, &mut rl, map_editor); //state 3
+    add_state(&mut statelist, &mut thread, &mut rl, options); //state 4
     set_state(&mut statelist, &mut thread, &mut rl, 0); //set state menu
 
     //Run current state

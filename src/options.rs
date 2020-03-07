@@ -1,6 +1,6 @@
 use crate::*;
 
-pub struct MainMenu {
+pub struct Options {
     options: Vec<String>,
     current: i16,
     mask: Texture2D,
@@ -9,7 +9,7 @@ pub struct MainMenu {
     timer: f64,
 }
 
-impl State for MainMenu {
+impl State for Options {
     fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {
         self.current = -1;
     }
@@ -28,23 +28,27 @@ impl State for MainMenu {
             }
             self.current -= 1;
         }
-        //Select current menu option
-        if rl.is_key_released(KeyboardKey::KEY_ENTER) {
-            //If selected play game
+        //Select current options menu
+        if rl.is_key_pressed(KeyboardKey::KEY_ENTER) {
+            //If selected 640x480 resolution
             if self.current == 0 {
-                return 2;
+                rl.set_window_size(640, 480);
+                // return 2;
             }
-            //If selected map editor
+            //If selected 800x600 resolution
             if self.current == 1 {
-                return 3;
+                rl.set_window_size(800, 600);
+                // return 3;
             }
-            //If selected options
+            //If 960x720 resolution
             if self.current == 2 {
-                return 4;
+                rl.set_window_size(960, 720);
+                // return 4;
             }
-            //If selected quit
+            //If selected return to menu
             if self.current == 3 {
-                std::process::exit(0);
+                return 1;
+                //std::process::exit(0);
             }
         }
 
@@ -92,16 +96,16 @@ impl State for MainMenu {
     fn leave(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
 }
 
-impl MainMenu {
+impl Options {
     pub fn new(rl: &mut RaylibHandle, thread: &mut RaylibThread) -> Self {
-        MainMenu {
+        Options {
             mask: rl.load_texture(thread, "art/mask.png").unwrap(),
             bg: rl.load_texture(thread, "art/bg.png").unwrap(),
             options: vec![
-                "Start Game".to_string(),
-                "Map Editor".to_string(),
-                "Options".to_string(),
-                "Quit Game".to_string(),
+                "640x480".to_string(),
+                "800x600".to_string(),
+                "960x720".to_string(),
+                "Return to menu".to_string(),
             ],
             current: 0,
             bg_pos: Vector2 { x: 120.0, y: 0.0 },

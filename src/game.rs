@@ -1,78 +1,144 @@
 use crate::*;
 
+const TILE_SIZE: i32 = 16;
+const SCALE: i32 = 3;
+
+const IDLE_STATE: i32 = 0;
+const MOVE_STATE: i32 = 1;
+const ATTACK_STATE: i32 = 2;
+//const WAITING_STATE: i32 = 3;
+//const MENU_STATE: i32 = 4;
+
 pub struct Game {
-    block: Model,
-    camera: Camera,
-    cube_pos: Vector3,
-    cube_screen_pos: Vector2,
+    map: Map,
+    tiles: Vec<(i32, i32)>,
+    state: i32,
+    units: Vec<Unit>,
+    sprites: Vec<Texture2D>,
+    selected_unit: usize, //index of currently selected unit in map.units
+                          //selected_unit: *mut Unit, //mutable pointer to the currently selected unit in the units list
+}
+
+fn move_heuristic(id: i32) -> i32 {
+    if id == 0 {
+        return -1;
+    }
+    1 //1 is default cost if not defined
+}
+
+fn attack_heuristic(id: i32) -> i32 {
+    if id == 0 {
+        return -1;
+    }
+    1 //1 is default cost if not defined
+}
+
+//Was very iffy about changing this but things still work. Apparently this will allow it to work with non Vec-based slices according to clippy
+fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &[(i32, i32)]) {
+    //changed from being &Vec<(i32, i32)>
+    for tuple in tiles {
+        d.draw_rectangle(
+            tuple.0 * TILE_SIZE * SCALE,
+            tuple.1 * TILE_SIZE * SCALE,
+            TILE_SIZE * SCALE,
+            TILE_SIZE * SCALE,
+            Color::from((100, 100, 255, 100)),
+        );
+    }
 }
 
 impl State for Game {
-    fn enter(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) {
-        rl.set_camera_mode(self.camera, CameraMode::CAMERA_ORBITAL);
-        let materials = self.block.materials_mut();
-        let material = &mut materials[0];
-        let mut maps = material.maps_mut();
-
-        let texture = unsafe {
-            let mut t = rl.load_texture(&thread, "art/test.png").unwrap();
-            t.gen_texture_mipmaps();
-            t.set_texture_filter(TextureFilterMode::FILTER_POINT);
-            t.unwrap()
-        };
-
-        maps[MaterialMapType::MAP_ALBEDO as usize].texture = texture;
+    fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {
+        self.tiles = floodfill(&self.map, (3, 3), 4, move_heuristic);
     }
 
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
-        rl.update_camera(&mut self.camera);
         //USER INPUT
         if rl.is_key_pressed(KeyboardKey::KEY_BACKSPACE) {
             //Go back to main menu on escape
             return 1;
         }
+        let mouse = rl.get_mouse_position();
+        if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {}
+
+        if self.state == IDLE_STATE {
+            //Select a friendly unit
+            if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
+                //if mouse position is on top of a unit
+                for i in 0..self.units.len() {
+                    let unit = &self.units[i];
+                    if unit.player_owned {
+                        if unit.ismoused(mouse, TILE_SIZE as f32, SCALE as f32) {
+                            self.state = MOVE_STATE;
+                            self.selected_unit = i;
+                            self.tiles = floodfill(
+                                &self.map,
+                                (unit.x / TILE_SIZE, unit.y / TILE_SIZE),
+                                unit.moverange,
+                                move_heuristic,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        if self.state == MOVE_STATE {
+            for tuple in &self.tiles.clone() {
+                //if mouse over tile
+                if mouse.x > tuple.0 as f32 + self.map.x as f32
+                    && mouse.y > tuple.1 as f32 + self.map.y as f32
+                    && mouse.x < tuple.0 as f32 + self.map.x as f32 + (TILE_SIZE * SCALE) as f32
+                    && mouse.y < tuple.1 as f32 + self.map.y as f32 + (TILE_SIZE * SCALE) as f32
+                {
+                    if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
+                        self.units[self.selected_unit].x = tuple.0;
+                        self.units[self.selected_unit].y = tuple.1;
+                        self.state = ATTACK_STATE;
+                        self.tiles = floodfill(
+                            &self.map,
+                            (
+                                self.units[self.selected_unit].x / TILE_SIZE,
+                                self.units[self.selected_unit].y / TILE_SIZE,
+                            ),
+                            self.units[self.selected_unit].attackrange,
+                            attack_heuristic,
+                        );
+                    }
+                }
+            }
+        }
+        if self.state == ATTACK_STATE {
+            for tuple in &self.tiles {
+                if mouse.x > tuple.0 as f32 + self.map.x as f32
+                    && mouse.y > tuple.1 as f32 + self.map.y as f32
+                    && mouse.x < tuple.0 as f32 + self.map.x as f32 + (TILE_SIZE * SCALE) as f32
+                    && mouse.y < tuple.1 as f32 + self.map.y as f32 + (TILE_SIZE * SCALE) as f32
+                {
+                    if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
+                        //do attack
+                        let mut enemy = &mut self.units[0];
+                        for u in &self.units {
+                            if u.player_owned == false && (u.x / TILE_SIZE) == tuple.0 && (u.y / TILE_SIZE) == tuple.1 {
+                                enemy = u;
+                            }
+                        }
+                        combat(&mut self.units[self.selected_unit], &mut enemy, self.units[self.selected_unit].attackrange);
+                    }
+                }
+            }
+        }
 
         //DRAWING
         let mut d = rl.begin_drawing(&thread);
         d.clear_background(Color::RAYWHITE);
-        self.cube_screen_pos = d.get_world_to_screen(
-            Vector3 {
-                x: self.cube_pos.x,
-                y: self.cube_pos.y + 2.5,
-                z: self.cube_pos.z,
-            },
-            self.camera,
-        );
-        {
-            let mut d2 = d.begin_mode_3D(self.camera);
-            d2.draw_model_ex(
-                &mut self.block,
-                self.cube_pos,
-                Vector3 {
-                    x: 1.0,
-                    y: 0.0,
-                    z: 0.0,
-                },
-                -90.0,
-                Vector3 {
-                    x: 1.0,
-                    y: 1.0,
-                    z: 1.0,
-                },
-                Color::WHITE,
-            );
-            d2.draw_cube_wires(self.cube_pos, 2.2, 2.2, 2.2, Color::MAROON);
-            d2.draw_grid(20, 1.0);
+        self.map.draw(&mut d);
+        for unit in &self.units {
+            unit.draw(&mut d, &self.sprites);
         }
-        d.draw_text(
-            "Enemy: 100/100",
-            (self.cube_screen_pos.x - (measure_text("Enemy: 100/100", 20) / 2) as f32) as i32,
-            self.cube_screen_pos.y as i32,
-            20,
-            Color::BLACK,
-        );
-        //d.draw_texture(&mut self.test, 50, 50, Color::WHITE);
-        //d.draw_text("This is the game state!", 120, 420, 40, Color::BLACK);
+        draw_tiles(&mut d, &self.tiles);
+        if self.state == MOVE_STATE {
+            draw_tiles(&mut d, &self.tiles);
+        }
         d.draw_fps(20, 20);
 
         //Return state change = false
@@ -85,34 +151,12 @@ impl State for Game {
 impl Game {
     pub fn new(rl: &mut RaylibHandle, thread: &mut RaylibThread) -> Self {
         Game {
-            block: rl.load_model(thread, "models/cube.obj").unwrap(),
-            camera: Camera::perspective(
-                //Position
-                Vector3 {
-                    x: 100.0,
-                    y: 100.0,
-                    z: 100.0,
-                },
-                //Target
-                Vector3 {
-                    x: 0.0,
-                    y: 0.0,
-                    z: 0.0,
-                },
-                //Up
-                Vector3 {
-                    x: 0.0,
-                    y: 1.0,
-                    z: 0.0,
-                },
-                5.0,
-            ),
-            cube_pos: Vector3 {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-            },
-            cube_screen_pos: Vector2 { x: 0.0, y: 0.0 },
+            map: Map::new(25, 25, rl, thread),
+            tiles: vec![],
+            state: IDLE_STATE,
+            units: vec![],
+            sprites: vec![],
+            selected_unit: 0,
         }
     }
 }
