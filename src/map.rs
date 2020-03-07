@@ -11,9 +11,7 @@ pub struct Map {
     pub height: i32,
     pub x: i32,
     pub y: i32,
-    pub units: Vec<Unit>,
     pub tiles: Texture2D,
-    pub sprites: Vec<Texture2D>,
 }
 
 #[allow(dead_code)]
@@ -36,9 +34,7 @@ impl Map {
             height: height as i32,
             x: 0,
             y: 0,
-            units: vec![],
             tiles: rl.load_texture(thread, "art/Dungeon_Tileset.png").unwrap(),
-            sprites: vec![],
         }
     }
     pub fn draw(&self, d: &mut RaylibDrawHandle) {
@@ -68,9 +64,6 @@ impl Map {
                 );
             }
         }
-        for unit in &self.units {
-            unit.draw(d, &self.sprites);
-        }
     }
 }
 
@@ -99,24 +92,25 @@ fn add_fill_node(
     range: i32,
     heuristic: fn(i32) -> i32,
 ) {
-    if n.x + dx < 0 || n.x + dx > map.width - 1 {
+    let newx = n.x + dx;
+    let newy = n.y + dy;
+    if newx < 0 || newx > map.width - 1 {
         return;
     }
-    if n.y + dy < 0 || n.y + dy > map.height - 1 {
+    if newy < 0 || newy > map.height - 1 {
         return;
     }
     if n.depth >= range {
         return;
     }
-    let h = heuristic(map.grid[n.x as usize][n.y as usize]);
+    let h = heuristic(map.grid[newx as usize][newy as usize]);
     if h == -1 {
         return;
     }
-
-    if !visited[((n.x + dx) + (n.y + dy) * map.width) as usize] {
-        visited[((n.x + dx) + (n.y + dy) * map.width) as usize] = true;
-        q.push_back(FillNode::new(n.x + dx, n.y + dy, n.depth + h));
-        path.push((n.x + dx, n.y + dy));
+    if !visited[(newx + newy * map.width) as usize] {
+        visited[(newx + newy * map.width) as usize] = true;
+        q.push_back(FillNode::new(newx, newy, n.depth + h));
+        path.push((newx, newy));
     }
 }
 
@@ -132,7 +126,6 @@ pub fn floodfill(
     visited[(start.0 + start.1 * map.width) as usize] = false;
 
     //Set up queue
-    //let mut q: Vec<FillNode> = vec![];
     let mut q = VecDeque::new();
     q.push_back(FillNode::new(start.0, start.1, 0));
 
