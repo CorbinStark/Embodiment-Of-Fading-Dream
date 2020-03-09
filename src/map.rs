@@ -75,7 +75,7 @@ impl Map {
                 file.write_i32::<LittleEndian>(self.grid[x as usize][y as usize])?;
                 //file.write_all(self.grid[x as usize][y as usize] as &[u8]);
             }
-            file.write_all(b"\n")?;
+            file.write_all(b"\n")?;//Might help to remove for loading, maybe.
         }
         Ok(())
     }
