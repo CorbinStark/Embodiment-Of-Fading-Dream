@@ -1,5 +1,6 @@
 extern crate byteorder;
 use crate::*;
+use byteorder::{BigEndian, ReadBytesExt};
 use byteorder::{LittleEndian, WriteBytesExt};
 use std::fs::File;
 use std::io::prelude::*;
@@ -78,7 +79,16 @@ impl Map {
         }
         Ok(())
     }
-    pub fn load(&self) {}
+    pub fn load(&mut self) -> std::io::Result<()> {
+        // Doesn't currently function, puts everything into the first array slot.
+        let mut file = File::open("saved.txt")?;
+        for y in 0..self.height {
+            for x in 0..self.width {
+                self.grid[x as usize][y as usize] = file.read_i32::<BigEndian>().unwrap();
+            }
+        }
+        Ok(())
+    }
 }
 
 //Algorithm to get the range of possible movements for a unit
