@@ -46,7 +46,7 @@ fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &[(i32, i32)]) {
         );
     }
 }
-
+#[allow(clippy::collapsible_if)]
 impl State for Game {
     fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {
         self.tiles = floodfill(&self.map, (3, 3), 4, move_heuristic);
@@ -67,8 +67,8 @@ impl State for Game {
                 //if mouse position is on top of a unit
                 for i in 0..self.units.len() {
                     let unit = &self.units[i];
-                    if unit.player_owned {
-                        if unit.ismoused(mouse, TILE_SIZE as f32, SCALE as f32) {
+                    if unit.player_owned && unit.ismoused(mouse, TILE_SIZE as f32, SCALE as f32) {
+                      //  if unit.ismoused(mouse, TILE_SIZE as f32, SCALE as f32) { //Collapsed the statement since it was giving warnings, can undo if neccesary.
                             self.state = MOVE_STATE;
                             self.selected_unit = i;
                             self.tiles = floodfill(
@@ -78,7 +78,7 @@ impl State for Game {
                                 move_heuristic,
                             );
                         }
-                    }
+                   // }
                 }
             }
         }
@@ -90,6 +90,7 @@ impl State for Game {
                     && mouse.x < tuple.0 as f32 + self.map.x as f32 + (TILE_SIZE * SCALE) as f32
                     && mouse.y < tuple.1 as f32 + self.map.y as f32 + (TILE_SIZE * SCALE) as f32
                 {
+                    
                     if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
                         self.units[self.selected_unit].x = tuple.0;
                         self.units[self.selected_unit].y = tuple.1;
@@ -116,13 +117,14 @@ impl State for Game {
                 {
                     if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
                         //do attack
-                        let mut enemy = &mut self.units[0];
+                        let mut enemy = self.units[0].clone(); // &mut self.units[0];
+                        let range = self.units[self.selected_unit].attackrange;
                         for u in &self.units {
-                            if u.player_owned == false && (u.x / TILE_SIZE) == tuple.0 && (u.y / TILE_SIZE) == tuple.1 {
-                                enemy = u;
+                            if !u.player_owned && (u.x / TILE_SIZE) == tuple.0 && (u.y / TILE_SIZE) == tuple.1 {
+                                enemy = u.clone();
                             }
                         }
-                        combat(&mut self.units[self.selected_unit], &mut enemy, self.units[self.selected_unit].attackrange);
+                        combat(&mut self.units[self.selected_unit], &mut enemy, range);//self.units[self.selected_unit].attackrange
                     }
                 }
             }

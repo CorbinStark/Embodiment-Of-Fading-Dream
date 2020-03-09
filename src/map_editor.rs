@@ -57,7 +57,13 @@ impl State for MapEditor {
         //DRAWING
         let mut d = rl.begin_drawing(&thread);
         d.clear_background(Color::RAYWHITE);
-
+        //FOR TESTING
+        //FOR TESTING
+        // ----DELETE LATER
+        self.map.save();
+         // ----DELETE LATER
+        //FOR TESTING
+        //FOR TESTING
         self.map.draw(&mut d);
         d.draw_fps(20, 20);
         if self.state == TILES {
