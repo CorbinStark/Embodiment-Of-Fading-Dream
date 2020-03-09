@@ -61,7 +61,7 @@ impl State for MapEditor {
         //FOR TESTING
         // ----DELETE LATER
         self.map.save();
-         // ----DELETE LATER
+        // ----DELETE LATER
         //FOR TESTING
         //FOR TESTING
         self.map.draw(&mut d);

@@ -120,7 +120,8 @@ impl Unit {
         }
     }
 
-    pub fn draw(&self, d: &mut RaylibDrawHandle, images: &[Texture2D]) { //&Vec<Texture2D>)
+    pub fn draw(&self, d: &mut RaylibDrawHandle, images: &[Texture2D]) {
+        //&Vec<Texture2D>)
         d.draw_texture(
             &images[((self.id * 4) + self.currentframe) as usize],
             self.x,
