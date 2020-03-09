@@ -1,4 +1,9 @@
 # Embodiment-Of-Fading-Dream
+Forest Pearson <fpearson@pdx.edu>
+
+Corbin Stark <costark@pdx.edu>
+
+Max Van Raden <vanraden@pdx.edu>
 
 A top down isometric turn-based strategy game making use of open source assets. This was written in Rust for the intro to Rust programming 410P/510P winter 2020 course at Portland State University.
 ## Instructions
@@ -42,3 +47,9 @@ $ cd cmake-3.15.2
 ## Requirements for windows
 
 Ensure that cmake is installed before running with cargo build, this can be acquired at [here](https://cmake.org/download/). Make sure to select the option to have it set a PATH variable.
+
+## Testing
+For unit testing in this project we did...
+
+## Results
+Overall the project....
