@@ -41,10 +41,10 @@ impl State for MapEditor {
             return 1;
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F3) {
-            self.map.save();
+            self.map.save().expect("Saving failed");
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F4) {
-            self.map.load();
+            self.map.load().expect("Loading failed");
         }
         let mut clicked_tileset: bool = false;
         let mut hovering_tileset: bool = false;

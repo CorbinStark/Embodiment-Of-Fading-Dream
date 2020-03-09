@@ -87,6 +87,7 @@ impl Map {
                 self.grid[x as usize][y as usize] = file.read_i32::<BigEndian>().unwrap();
             }
         }
+        println!("saving");
         Ok(())
     }
 }
