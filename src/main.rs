@@ -15,7 +15,6 @@ use main_menu::*;
 use map::*;
 use map_editor::*;
 use options::*;
-use options::*;
 use states::*;
 use std::collections::VecDeque;
 use unit::*;
