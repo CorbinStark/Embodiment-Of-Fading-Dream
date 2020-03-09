@@ -1,10 +1,12 @@
+extern crate byteorder;
 use crate::*;
-
+use byteorder::{BigEndian, ReadBytesExt};
+use byteorder::{LittleEndian, WriteBytesExt};
+use std::fs::File;
+use std::io::prelude::*;
 const TILE_SIZE: i32 = 16;
 const SCALE: f32 = 3.0;
 
-//#[derive(Clone)]
-#[allow(dead_code)]
 pub struct Map {
     pub grid: Vec<Vec<i32>>, //2d array (2d vec) of i32 (IDs) that correspond to tile types (textures for the tiles, wall, ground, etc.)
     pub width: i32,
@@ -65,6 +67,28 @@ impl Map {
             }
         }
     }
+    pub fn save(&self) -> std::io::Result<()> {
+        let mut file = File::create("saved.txt")?;
+        //file.write_all(b"Hello!\n")?;
+        for y in 0..self.height {
+            for x in 0..self.width {
+                file.write_i32::<LittleEndian>(self.grid[x as usize][y as usize])?;
+                //file.write_all(self.grid[x as usize][y as usize] as &[u8]);
+            }
+            file.write_all(b"\n")?;//Might help to remove for loading, maybe.
+        }
+        Ok(())
+    }
+    pub fn load(&mut self) -> std::io::Result<()> {
+        // Doesn't currently function, puts the entire file into each grid slot. Might help to put everything into a trimmed array which is then put into the grid.
+        let mut file = File::open("saved.txt")?;
+        for y in 0..self.height {
+            for x in 0..self.width {
+                self.grid[x as usize][y as usize] = file.read_i32::<BigEndian>().unwrap();
+            }
+        }
+        Ok(())
+    }
 }
 
 //Algorithm to get the range of possible movements for a unit
@@ -114,7 +138,6 @@ fn add_fill_node(
     }
 }
 
-#[allow(dead_code)]
 pub fn floodfill(
     map: &Map,
     start: (i32, i32),

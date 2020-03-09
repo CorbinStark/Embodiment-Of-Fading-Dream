@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 raylib = "1.0.0"
 rand = "0.7.3"
+byteorder = "1.3.4"

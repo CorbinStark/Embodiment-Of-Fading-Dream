@@ -8,6 +8,7 @@ const TILE_SIZE: f32 = 16.0;
 const SCALE: f32 = 3.0;
 
 pub struct MapEditor {
+    options: Vec<String>,
     map: Map,
     state: u8,
     selected_tile: i32,
@@ -36,6 +37,15 @@ impl State for MapEditor {
             }
         }
 
+        if rl.is_key_pressed(KeyboardKey::KEY_F2) {
+            return 1;
+        }
+        if rl.is_key_pressed(KeyboardKey::KEY_F3) {
+            self.map.save();
+        }
+        if rl.is_key_pressed(KeyboardKey::KEY_F4) {
+            self.map.load();
+        }
         let mut clicked_tileset: bool = false;
         let mut hovering_tileset: bool = false;
         let clicked: bool = rl.is_mouse_button_down(MouseButton::MOUSE_LEFT_BUTTON);
@@ -57,7 +67,13 @@ impl State for MapEditor {
         //DRAWING
         let mut d = rl.begin_drawing(&thread);
         d.clear_background(Color::RAYWHITE);
-
+        //FOR TESTING
+        //FOR TESTING
+        // ----DELETE LATER
+        //self.map.save();
+        // ----DELETE LATER
+        //FOR TESTING
+        //FOR TESTING
         self.map.draw(&mut d);
         d.draw_fps(20, 20);
         if self.state == TILES {
@@ -100,7 +116,15 @@ impl State for MapEditor {
                 self.map.grid[tile_x as usize][tile_y as usize] = self.selected_tile;
             }
         }
-
+        for i in 0..self.options.len() {
+            d.draw_text(
+                &self.options[i][..],
+                55 + (i as i32 * 80),
+                420,
+                15,
+                Color::WHITE,
+            );
+        }
         //Return state change = false
         NO_STATE_CHANGE
     }
@@ -111,6 +135,13 @@ impl State for MapEditor {
 impl MapEditor {
     pub fn new(rl: &mut RaylibHandle, thread: &mut RaylibThread) -> Self {
         MapEditor {
+            options: vec![
+                "F1: Tiles".to_string(),
+                "F2: Menu".to_string(),
+                "F3: Save".to_string(),
+                "F4: Load".to_string(),
+                "Esc: Exit to windows".to_string(),
+            ],
             map: Map::new(25, 25, rl, thread),
             state: PLACE,
             selected_tile: 0,

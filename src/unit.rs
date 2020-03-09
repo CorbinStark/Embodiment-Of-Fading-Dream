@@ -1,7 +1,6 @@
 use crate::*;
 
 #[derive(Clone)]
-#[allow(dead_code)]
 pub struct Unit {
     id: i32,           //for texture drawing
     currentframe: i32, //to get image, refer to images[(ID * 4) + currentframe]
@@ -96,7 +95,6 @@ impl Unit {
 
     //this function is both a setter and a getter. It checks if a unit is dead,
     //if they aren't it checks if they should be, and sets them as dead accordingly
-    #[allow(dead_code)]
     pub fn is_alive(&mut self) -> bool {
         if self.alive && self.health > 0 {
             return true;
@@ -113,7 +111,6 @@ impl Unit {
     }
 
     //generates hit damage, returns -1 to indicate attack missing
-    #[allow(dead_code)]
     pub fn get_damage(&self) -> i32 {
         let mut rnjesus = rand::thread_rng();
         if rnjesus.gen_range(1, 100) <= self.basehit {
@@ -123,7 +120,8 @@ impl Unit {
         }
     }
 
-    pub fn draw(&self, d: &mut RaylibDrawHandle, images: &Vec<Texture2D>) {
+    pub fn draw(&self, d: &mut RaylibDrawHandle, images: &[Texture2D]) {
+        //&Vec<Texture2D>)
         d.draw_texture(
             &images[((self.id * 4) + self.currentframe) as usize],
             self.x,
@@ -148,7 +146,6 @@ impl Unit {
 //
 //Unit is the attacking unit, unit2 is the defending unit
 //returns 0 for no units killed, 1 for defending unit killed, and 2 for attacking unit killed
-#[allow(dead_code)]
 pub fn combat(unit: &mut Unit, unit2: &mut Unit, range: i32) -> i32 {
     assert_eq!(unit.is_alive(), true, "Attacking unit isn't alive");
     assert_eq!(unit2.is_alive(), true, "Defending unit isn't alive");
