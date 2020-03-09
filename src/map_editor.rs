@@ -44,7 +44,7 @@ impl State for MapEditor {
             self.map.save();
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F4) {
-            return 1;
+            self.map.load();
         }
         let mut clicked_tileset: bool = false;
         let mut hovering_tileset: bool = false;
