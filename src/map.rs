@@ -69,7 +69,7 @@ impl Map {
     }
     pub fn save(&self) -> std::io::Result<()> {
         let mut file = File::create("saved.txt")?;
-        file.write_all(b"Hello!\n")?;
+        //file.write_all(b"Hello!\n")?;
         for y in 0..self.height {
             for x in 0..self.width {
                 file.write_i32::<LittleEndian>(self.grid[x as usize][y as usize])?;
