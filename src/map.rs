@@ -80,7 +80,7 @@ impl Map {
         Ok(())
     }
     pub fn load(&mut self) -> std::io::Result<()> {
-        // Doesn't currently function, puts the entire file into each grid slot.
+        // Doesn't currently function, puts the entire file into each grid slot. Might help to put everything into a trimmed array which is then put into the grid.
         let mut file = File::open("saved.txt")?;
         for y in 0..self.height {
             for x in 0..self.width {
