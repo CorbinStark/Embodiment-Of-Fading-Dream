@@ -41,10 +41,10 @@ impl State for MapEditor {
             return 1;
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F3) {
-            self.map.save();
+            self.map.save().expect("Unable to execute save.");
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F4) {
-            self.map.load();
+            self.map.load().expect("Unable to execute load.");
         }
         let mut clicked_tileset: bool = false;
         let mut hovering_tileset: bool = false;
@@ -67,13 +67,6 @@ impl State for MapEditor {
         //DRAWING
         let mut d = rl.begin_drawing(&thread);
         d.clear_background(Color::RAYWHITE);
-        //FOR TESTING
-        //FOR TESTING
-        // ----DELETE LATER
-        //self.map.save();
-        // ----DELETE LATER
-        //FOR TESTING
-        //FOR TESTING
         self.map.draw(&mut d);
         d.draw_fps(20, 20);
         if self.state == TILES {
