@@ -91,7 +91,11 @@ impl Map {
         let mut count = 0;
         for line in guts.lines() {
             if !line.is_empty() {
-                vec.push(line.parse::<i32>().unwrap());
+                //vec.push(line.parse::<i32>().unwrap());
+                if let Ok(i) = line.parse::<i32>() {
+                    vec.push(i);
+                }
+                    
             }
         }
 
