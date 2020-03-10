@@ -90,9 +90,14 @@ impl Map {
         let mut vec: Vec<i32> = Vec::new();
         let mut count = 0;
         for line in guts.lines() {
-            if !line.is_empty() {
-                vec.push(line.parse::<i32>().unwrap());
+            let res = line.parse::<i32>();
+            match res {
+                Ok(res) => vec.push(res),
+                Err(_) => println!("error")
             }
+           // if !line.is_empty() {
+           //     vec.push(line.parse::<i32>().unwrap());
+           // }
         }
         
 
