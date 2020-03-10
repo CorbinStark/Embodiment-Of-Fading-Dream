@@ -91,19 +91,16 @@ impl Map {
         let mut count = 0;
         for line in guts.lines() {
             if !line.is_empty() {
-                //vec.push(line.parse::<i32>().unwrap());
-                if let Ok(i) = line.parse::<i32>() {
-                    vec.push(i);
-                }
-                    
+                vec.push(line.parse::<i32>().unwrap());
             }
         }
+        
 
         for y in 0..self.height {
             for x in 0..self.width {
                 self.grid[x as usize][y as usize] = vec[count];
                 //self.grid[x as usize][y as usize] = file.read_i32::<BigEndian>().unwrap();
-                count = count + 1;
+                count += 1;
             }
         }
         Ok(())
