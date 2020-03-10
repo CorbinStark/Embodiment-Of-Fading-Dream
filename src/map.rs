@@ -85,7 +85,7 @@ impl Map {
         // Doesn't currently function, puts the entire file into each grid slot. Might help to put everything into a trimmed array which is then put into the grid.
         let mut file = File::open("saved.txt").unwrap();
         let mut guts = String::new();
-        file.read_to_string(&mut contents).unwrap();
+        file.read_to_string(&mut guts).unwrap();
         //let Ok(lines) = Ok(std::io::BufReader::new(file).lines());
         let mut vec: Vec<i32> = Vec::new();
         let mut count = 0;
