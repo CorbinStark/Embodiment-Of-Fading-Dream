@@ -3,7 +3,8 @@ use crate::*;
 use byteorder::{BigEndian, ReadBytesExt};
 use byteorder::{LittleEndian, WriteBytesExt};
 use std::fs::File;
-use std::io::prelude::*;
+use std::io::*;
+
 const TILE_SIZE: i32 = 16;
 const SCALE: f32 = 3.0;
 
@@ -73,6 +74,7 @@ impl Map {
         for y in 0..self.height {
             for x in 0..self.width {
                 file.write_i32::<LittleEndian>(self.grid[x as usize][y as usize])?;
+                file.write_all(b"\n")?;
                 //file.write_all(self.grid[x as usize][y as usize] as &[u8]);
             }
             file.write_all(b"\n")?;//Might help to remove for loading, maybe.
@@ -81,13 +83,25 @@ impl Map {
     }
     pub fn load(&mut self) -> std::io::Result<()> {
         // Doesn't currently function, puts the entire file into each grid slot. Might help to put everything into a trimmed array which is then put into the grid.
-        let mut file = File::open("saved.txt")?;
-        for y in 0..self.height {
-            for x in 0..self.width {
-                self.grid[x as usize][y as usize] = file.read_i32::<BigEndian>().unwrap();
+        let mut file = File::open("saved.txt").unwrap();
+        let mut guts = String::new();
+        file.read_to_string(&mut contents).unwrap();
+        //let Ok(lines) = Ok(std::io::BufReader::new(file).lines());
+        let mut vec: Vec<i32> = Vec::new();
+        let mut count = 0;
+        for line in guts.lines() {
+            if !line.is_empty() {
+                vec.push(line.parse::<i32>().unwrap());
             }
         }
-        println!("saving");
+
+        for y in 0..self.height {
+            for x in 0..self.width {
+                self.grid[x as usize][y as usize] = vec[count];
+                //self.grid[x as usize][y as usize] = file.read_i32::<BigEndian>().unwrap();
+                count = count + 1;
+            }
+        }
         Ok(())
     }
 }

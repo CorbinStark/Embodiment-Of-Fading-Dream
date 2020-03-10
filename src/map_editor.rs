@@ -19,7 +19,7 @@ impl State for MapEditor {
     #[allow(unused_variables)]
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
         //USER INPUT
-
+    
         let mouse = rl.get_mouse_position();
         if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {}
         if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
