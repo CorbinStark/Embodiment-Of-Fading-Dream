@@ -12,7 +12,7 @@ pub struct Unit {
     alive: bool,
     counter: bool,
 
-    health: i32,
+    pub health: i32,
     maxhealth: i32,
     pub moverange: i32,
     pub attackrange: i32,

@@ -14,6 +14,7 @@ pub struct Game {
     tiles: Vec<(i32, i32)>,
     state: i32,
     units: Vec<Unit>,
+    enemies: Vec<Unit>,
     sprites: Vec<Texture2D>,
     selected_unit: usize, //index of currently selected unit in map.units
                           //selected_unit: *mut Unit, //mutable pointer to the currently selected unit in the units list
@@ -108,27 +109,24 @@ impl State for Game {
             }
         }
         if self.state == ATTACK_STATE {
-            for tuple in &self.tiles {
-                if mouse.x > tuple.0 as f32 + self.map.x as f32
-                    && mouse.y > tuple.1 as f32 + self.map.y as f32
-                    && mouse.x < tuple.0 as f32 + self.map.x as f32 + (TILE_SIZE * SCALE) as f32
-                    && mouse.y < tuple.1 as f32 + self.map.y as f32 + (TILE_SIZE * SCALE) as f32
-                {
-                    if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
-                        //do attack
-                        let mut enemy = self.units[0].clone(); // &mut self.units[0];
-                        let range = self.units[self.selected_unit].attackrange;
-                        for u in &self.units {
-                            if !u.player_owned
-                                && (u.x / TILE_SIZE) == tuple.0
-                                && (u.y / TILE_SIZE) == tuple.1
-                            {
-                                enemy = u.clone();
-                            }
-                        }
-                        combat(&mut self.units[self.selected_unit], &mut enemy, range);
-                        //self.units[self.selected_unit].attackrange
+            if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
+                //do attack
+                let mut selected_enemy: i32 = -1;
+                let mut i: i32 = 0;
+                for u in &self.enemies {
+                    i += 1;
+                    if mouse.x > u.x as f32 + self.map.x as f32
+                        && mouse.y > u.y as f32 + self.map.y as f32
+                        && mouse.x < u.x as f32 + self.map.x as f32 + (TILE_SIZE * SCALE) as f32
+                        && mouse.y < u.y as f32 + self.map.y as f32 + (TILE_SIZE * SCALE) as f32
+                    {
+                        selected_enemy = i;
                     }
+                }
+                if selected_enemy > 0 {
+                    let player = &self.units[self.selected_unit];
+                    let damage = player.get_damage();
+                    self.enemies[selected_enemy as usize].health -= damage;
                 }
             }
         }
@@ -160,6 +158,7 @@ impl Game {
             tiles: vec![],
             state: IDLE_STATE,
             units: vec![],
+            enemies: vec![],
             sprites: vec![],
             selected_unit: 0,
         }
