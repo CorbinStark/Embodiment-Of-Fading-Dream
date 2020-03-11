@@ -74,8 +74,8 @@ impl Map {
         for y in 0..self.height {
             for x in 0..self.width {
                 file.write_i32::<LittleEndian>(self.grid[x as usize][y as usize])?;
+                //file.write_fmt(self.grid[x as usize][y as usize]);
                 file.write_all(b"\n")?;
-                //file.write_all(self.grid[x as usize][y as usize] as &[u8]);
             }
             file.write_all(b"\n")?;//Might help to remove for loading, maybe.
         }
@@ -85,7 +85,8 @@ impl Map {
         // Doesn't currently function, puts the entire file into each grid slot. Might help to put everything into a trimmed array which is then put into the grid.
         let mut file = File::open("saved.txt").unwrap();
         let mut guts = String::new();
-        file.read_to_string(&mut guts).unwrap();
+        guts = file.read_i32::<BigEndian>().unwrap().to_string();
+        println!("{}", guts);
         //let Ok(lines) = Ok(std::io::BufReader::new(file).lines());
         let mut vec: Vec<i32> = Vec::new();
         let mut count = 0;
