@@ -1,11 +1,9 @@
 extern crate byteorder;
 use crate::*;
-use byteorder::{BigEndian, ReadBytesExt};
-use byteorder::{LittleEndian, WriteBytesExt};
 use std::fs::File;
 use std::io::prelude::*;
-const TILE_SIZE: i32 = 16;
-const SCALE: f32 = 3.0;
+pub const TILE_SIZE: i32 = 16;
+pub const SCALE: f32 = 3.0;
 
 pub struct Map {
     pub grid: Vec<Vec<i32>>, //2d array (2d vec) of i32 (IDs) that correspond to tile types (textures for the tiles, wall, ground, etc.)
@@ -15,7 +13,6 @@ pub struct Map {
     pub y: i32,
     pub tiles: Texture2D,
 }
-
 #[allow(dead_code)]
 #[allow(clippy::needless_range_loop)]
 impl Map {
@@ -69,22 +66,42 @@ impl Map {
     }
     pub fn save(&self) -> std::io::Result<()> {
         let mut file = File::create("saved.txt")?;
-        //file.write_all(b"Hello!\n")?;
         for y in 0..self.height {
             for x in 0..self.width {
-                file.write_i32::<LittleEndian>(self.grid[x as usize][y as usize])?;
-                //file.write_all(self.grid[x as usize][y as usize] as &[u8]);
+                file.write_all(&self.grid[x as usize][y as usize].to_le_bytes())
+                    .expect("error");
             }
-            file.write_all(b"\n")?;//Might help to remove for loading, maybe.
         }
         Ok(())
     }
+
     pub fn load(&mut self) -> std::io::Result<()> {
-        // Doesn't currently function, puts the entire file into each grid slot. Might help to put everything into a trimmed array which is then put into the grid.
-        let mut file = File::open("saved.txt")?;
+        let mut count = 0;
+        let mut data = Vec::new();
+        let mut f = File::open("saved.txt").expect("unable to open file");
+        f.read_to_end(&mut data).expect("Unable to read data");
+        println!("{}", data.len());
+        println!("{}", data[0]);
         for y in 0..self.height {
             for x in 0..self.width {
-                self.grid[x as usize][y as usize] = file.read_i32::<BigEndian>().unwrap();
+                if data[count] == 0 {
+                    //println!("{}", data[count]);
+                    count += 3;
+                }
+                self.grid[x as usize][y as usize] = i32::from(data[count]);
+                count += 1;
+            }
+        }
+        count = 0;
+        let mut filet = File::create("loaded.txt")?;
+        for _y in 0..self.height {
+            for _x in 0..self.width {
+                if data[count] == 0 {
+                    //println!("{}", data[count]);
+                    count += 3;
+                }
+                filet.write_all(&data[count].to_le_bytes()).expect("error");
+                count += 1;
             }
         }
         Ok(())
