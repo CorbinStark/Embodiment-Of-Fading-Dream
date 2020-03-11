@@ -4,8 +4,6 @@ const PLACE: u8 = 0;
 const TILES: u8 = 1;
 #[allow(dead_code)]
 const UNITS: u8 = 2;
-const TILE_SIZE: f32 = 16.0;
-const SCALE: f32 = 3.0;
 
 pub struct MapEditor {
     options: Vec<String>,
@@ -41,10 +39,17 @@ impl State for MapEditor {
             return 1;
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F3) {
+<<<<<<< HEAD
             self.map.save().expect("Saving failed");
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F4) {
             self.map.load().expect("Loading failed");
+=======
+            self.map.save().expect("Unable to execute save.");
+        }
+        if rl.is_key_pressed(KeyboardKey::KEY_F4) {
+            self.map.load().expect("Unable to execute load.");
+>>>>>>> 565d1cdac4b860347c6f7ac77b4fe93e50dbb1c5
         }
         let mut clicked_tileset: bool = false;
         let mut hovering_tileset: bool = false;
@@ -67,19 +72,12 @@ impl State for MapEditor {
         //DRAWING
         let mut d = rl.begin_drawing(&thread);
         d.clear_background(Color::RAYWHITE);
-        //FOR TESTING
-        //FOR TESTING
-        // ----DELETE LATER
-        //self.map.save();
-        // ----DELETE LATER
-        //FOR TESTING
-        //FOR TESTING
         self.map.draw(&mut d);
         d.draw_fps(20, 20);
         if self.state == TILES {
             d.draw_texture(&self.map.tiles, 0, 0, Color::WHITE);
-            let tile_x = (mouse.x / TILE_SIZE) as i32;
-            let tile_y = (mouse.y / TILE_SIZE) as i32;
+            let tile_x = (mouse.x / TILE_SIZE as f32) as i32;
+            let tile_y = (mouse.y / TILE_SIZE as f32) as i32;
             if hovering_tileset {
                 d.draw_rectangle(
                     tile_x * TILE_SIZE as i32,
@@ -92,8 +90,8 @@ impl State for MapEditor {
             if clicked_tileset {
                 self.selected_tile = tile_x + tile_y * 10;
             }
-            let src_x: f32 = (self.selected_tile % 10) as f32 * TILE_SIZE;
-            let src_y: f32 = (self.selected_tile / 10) as f32 * TILE_SIZE;
+            let src_x: f32 = (self.selected_tile % 10) as f32 * TILE_SIZE as f32;
+            let src_y: f32 = (self.selected_tile / 10) as f32 * TILE_SIZE as f32;
             d.draw_rectangle(
                 src_x as i32,
                 src_y as i32,
@@ -102,13 +100,13 @@ impl State for MapEditor {
                 Color::RED,
             );
         } else if self.state == PLACE {
-            let tile_x = (mouse.x / (TILE_SIZE * SCALE)) as i32;
-            let tile_y = (mouse.y / (TILE_SIZE * SCALE)) as i32;
+            let tile_x = (mouse.x / (TILE_SIZE as f32 * SCALE)) as i32;
+            let tile_y = (mouse.y / (TILE_SIZE as f32 * SCALE)) as i32;
             d.draw_rectangle(
-                tile_x * (TILE_SIZE * SCALE) as i32,
-                tile_y * (TILE_SIZE * SCALE) as i32,
-                (TILE_SIZE * SCALE) as i32,
-                (TILE_SIZE * SCALE) as i32,
+                tile_x * (TILE_SIZE as f32 * SCALE) as i32,
+                tile_y * (TILE_SIZE as f32 * SCALE) as i32,
+                (TILE_SIZE as f32 * SCALE) as i32,
+                (TILE_SIZE as f32 * SCALE) as i32,
                 Color::GREEN,
             );
             if clicked {

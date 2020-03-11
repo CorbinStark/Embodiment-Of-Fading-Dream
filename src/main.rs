@@ -27,8 +27,21 @@ fn main() {
         .build();
     rl.set_target_fps(60);
 
+    //Hardcode the units for the time being
+    let friendlies: Vec<Unit> = vec![Unit::new_custom(
+        0, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 5, 5,
+    )];
+    let enemies: Vec<Unit> = vec![Unit::new_custom(
+        0, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 2, 2,
+    )];
+
     //Initialize states
-    let game = Box::new(Game::new(&mut rl, &mut thread));
+    let game = Box::new(Game::from_unit_population(
+        &mut rl,
+        &mut thread,
+        friendlies,
+        enemies,
+    ));
     let map_editor = Box::new(MapEditor::new(&mut rl, &mut thread));
     let main_menu = Box::new(MainMenu::new(&mut rl, &mut thread));
     let options = Box::new(Options::new(&mut rl, &mut thread));
