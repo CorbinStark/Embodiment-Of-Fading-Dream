@@ -71,7 +71,6 @@ impl Map {
                 file.write_all(&self.grid[x as usize][y as usize].to_le_bytes())
                     .expect("error");
             }
-            file.write_all(b"\n")?; //Might help to remove for loading, maybe.
         }
         Ok(())
     }
@@ -85,6 +84,10 @@ impl Map {
         println!("{}", data[0]);
         for y in 0..self.height {
             for x in 0..self.width {
+                if data[count] == 0 {
+                    //println!("{}", data[count]);
+                    count += 3;
+                }
                 self.grid[x as usize][y as usize] = i32::from(data[count]);
                 count += 1;
             }
@@ -93,6 +96,10 @@ impl Map {
         let mut filet = File::create("loaded.txt")?;
         for _y in 0..self.height {
             for _x in 0..self.width {
+                if data[count] == 0 {
+                    //println!("{}", data[count]);
+                    count += 3;
+                }
                 filet.write_all(&data[count].to_le_bytes()).expect("error");
                 count += 1;
             }
