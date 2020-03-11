@@ -68,7 +68,8 @@ impl Map {
         let mut file = File::create("saved.txt")?;
         for y in 0..self.height {
             for x in 0..self.width {
-                file.write_all(&self.grid[x as usize][y as usize].to_le_bytes()).expect("error");
+                file.write_all(&self.grid[x as usize][y as usize].to_le_bytes())
+                    .expect("error");
             }
             file.write_all(b"\n")?; //Might help to remove for loading, maybe.
         }
@@ -88,11 +89,11 @@ impl Map {
                 count += 1;
             }
         }
-         count = 0;
+        count = 0;
         let mut filet = File::create("loaded.txt")?;
         for _y in 0..self.height {
             for _x in 0..self.width {
-                filet.write_all(&data[count].to_le_bytes()).expect("error"); 
+                filet.write_all(&data[count].to_le_bytes()).expect("error");
                 count += 1;
             }
         }
