@@ -71,7 +71,6 @@ impl Map {
                 file.write_all(&self.grid[x as usize][y as usize].to_le_bytes())
                     .expect("error");
             }
-            file.write_all(b"\n")?; //Might help to remove for loading, maybe.
         }
         Ok(())
     }
