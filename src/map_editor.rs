@@ -4,8 +4,6 @@ const PLACE: u8 = 0;
 const TILES: u8 = 1;
 #[allow(dead_code)]
 const UNITS: u8 = 2;
-const TILE_SIZE: f32 = 16.0;
-const SCALE: f32 = 3.0;
 
 pub struct MapEditor {
     options: Vec<String>,
@@ -71,8 +69,8 @@ impl State for MapEditor {
         d.draw_fps(20, 20);
         if self.state == TILES {
             d.draw_texture(&self.map.tiles, 0, 0, Color::WHITE);
-            let tile_x = (mouse.x / TILE_SIZE) as i32;
-            let tile_y = (mouse.y / TILE_SIZE) as i32;
+            let tile_x = (mouse.x / TILE_SIZE as f32) as i32;
+            let tile_y = (mouse.y / TILE_SIZE as f32) as i32;
             if hovering_tileset {
                 d.draw_rectangle(
                     tile_x * TILE_SIZE as i32,
@@ -85,8 +83,8 @@ impl State for MapEditor {
             if clicked_tileset {
                 self.selected_tile = tile_x + tile_y * 10;
             }
-            let src_x: f32 = (self.selected_tile % 10) as f32 * TILE_SIZE;
-            let src_y: f32 = (self.selected_tile / 10) as f32 * TILE_SIZE;
+            let src_x: f32 = (self.selected_tile % 10) as f32 * TILE_SIZE as f32;
+            let src_y: f32 = (self.selected_tile / 10) as f32 * TILE_SIZE as f32;
             d.draw_rectangle(
                 src_x as i32,
                 src_y as i32,
@@ -95,13 +93,13 @@ impl State for MapEditor {
                 Color::RED,
             );
         } else if self.state == PLACE {
-            let tile_x = (mouse.x / (TILE_SIZE * SCALE)) as i32;
-            let tile_y = (mouse.y / (TILE_SIZE * SCALE)) as i32;
+            let tile_x = (mouse.x / (TILE_SIZE as f32 * SCALE)) as i32;
+            let tile_y = (mouse.y / (TILE_SIZE as f32 * SCALE)) as i32;
             d.draw_rectangle(
-                tile_x * (TILE_SIZE * SCALE) as i32,
-                tile_y * (TILE_SIZE * SCALE) as i32,
-                (TILE_SIZE * SCALE) as i32,
-                (TILE_SIZE * SCALE) as i32,
+                tile_x * (TILE_SIZE as f32 * SCALE) as i32,
+                tile_y * (TILE_SIZE as f32 * SCALE) as i32,
+                (TILE_SIZE as f32 * SCALE) as i32,
+                (TILE_SIZE as f32 * SCALE) as i32,
                 Color::GREEN,
             );
             if clicked {

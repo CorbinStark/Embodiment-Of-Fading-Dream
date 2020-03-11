@@ -8,7 +8,6 @@ pub struct Unit {
     pub x: i32,
     pub y: i32,
 
-    pub player_owned: bool,
     alive: bool,
     counter: bool,
 
@@ -28,7 +27,7 @@ impl Unit {
     //Constructors for various unit types
     //
     #[allow(dead_code)]
-    pub fn new(player_owned: bool) -> Self {
+    pub fn new() -> Self {
         Unit {
             id: 0,
             currentframe: 0,
@@ -36,7 +35,6 @@ impl Unit {
             x: 0,
             y: 0,
 
-            player_owned,
             alive: true,
             counter: true,
 
@@ -55,7 +53,6 @@ impl Unit {
     pub fn new_custom(
         id: i32,
         name: &str,
-        player_owned: bool,
         alive: bool,
         counter: bool,
         maxhealth: i32,
@@ -66,26 +63,27 @@ impl Unit {
         maxdamage: i32,
         mindamage: i32,
         basehit: i32,
+        x: i32,
+        y: i32,
     ) -> Self {
         Unit {
             id,
             currentframe: 0,
             name: name.to_string(),
-            x: 0,
-            y: 0,
+            x: x * (TILE_SIZE as f32 * SCALE) as i32,
+            y: y * (TILE_SIZE as f32 * SCALE) as i32,
 
-            player_owned,
-            alive,
-            counter,
+            alive: alive,
+            counter: counter,
 
-            maxhealth,
-            health,
-            moverange,
-            attackrange,
-            armor,
-            maxdamage,
-            mindamage,
-            basehit,
+            maxhealth: maxhealth,
+            health: health,
+            moverange: moverange,
+            attackrange: attackrange,
+            armor: armor,
+            maxdamage: maxdamage,
+            mindamage: mindamage,
+            basehit: basehit,
         }
     }
 
@@ -120,14 +118,24 @@ impl Unit {
         }
     }
 
-    pub fn draw(&self, d: &mut RaylibDrawHandle, images: &[Texture2D]) {
+    pub fn draw(&mut self, d: &mut RaylibDrawHandle, images: &[Texture2D], timer: i32) {
         //&Vec<Texture2D>)
-        d.draw_texture(
+        let source = Rectangle::new(0.0, 0.0, 16.0, 16.0);
+        let dest = Rectangle::new(self.x as f32, self.y as f32, 16.0 * SCALE, 16.0 * SCALE);
+        d.draw_texture_pro(
             &images[((self.id * 4) + self.currentframe) as usize],
-            self.x,
-            self.y,
+            source,
+            dest,
+            Vector2::new(0.0, 0.0),
+            0.0,
             Color::WHITE,
         );
+        if timer % 15 == 0 {
+            self.currentframe += 1;
+            if self.currentframe >= 4 {
+                self.currentframe = 0;
+            }
+        }
     }
 
     pub fn ismoused(&self, mouse: Vector2, tile_size: f32, scale: f32) -> bool {
@@ -135,79 +143,5 @@ impl Unit {
             && mouse.y > self.y as f32
             && mouse.x < self.x as f32 + (tile_size * scale)
             && mouse.y < self.y as f32 + (tile_size * scale)
-    }
-}
-
-//
-//Functions related to units that don't make sense as methods
-//
-
-//This function handles combat encounters
-//
-//Unit is the attacking unit, unit2 is the defending unit
-//returns 0 for no units killed, 1 for defending unit killed, and 2 for attacking unit killed
-pub fn combat(unit: &mut Unit, unit2: &mut Unit, range: i32) -> i32 {
-    assert_eq!(unit.is_alive(), true, "Attacking unit isn't alive");
-    assert_eq!(unit2.is_alive(), true, "Defending unit isn't alive");
-
-    let attack = unit.get_damage();
-    println!("The {} prepares to attack the {}!", unit.name, unit2.name);
-    if attack == -1 {
-        println!("The attack misses!");
-    } else {
-        let damage = attack - unit2.armor;
-        if damage > 0 {
-            unit2.health -= damage;
-            println!(
-                "The {} hits the {} for {} damage, leaving them with {} health!",
-                unit.name, unit2.name, damage, unit2.health
-            );
-        } else {
-            println!(
-                "The {}'s attack can't get through the {}'s armor!",
-                unit.name, unit2.name
-            );
-        }
-    }
-    if unit2.is_alive() {
-        //Checks the defending unit is in range and can counter
-        if range <= unit2.attackrange && unit2.counter {
-            println!("The {} prepares to counter attack!", unit2.name);
-            let counter_attack = unit2.get_damage();
-            if counter_attack == -1 {
-                println!("The counter attack misses!");
-                println!("The combat ends.");
-                return 0;
-            } else {
-                let counter_damage = counter_attack - unit.armor;
-                if counter_damage > 0 {
-                    unit.health -= counter_damage;
-                    println!(
-                        "The {} counterattacks the {} for {} damage, leaving them with {} health!",
-                        unit2.name, unit.name, counter_damage, unit.health
-                    );
-                } else {
-                    println!(
-                        "The {}'s attack can't get through the {}'s armor!",
-                        unit2.name, unit.name
-                    );
-                }
-            }
-            if unit.is_alive() {
-                println!("The combat ends.");
-                0
-            } else {
-                println!("The attacking {} is killed!", unit.name);
-                2
-            }
-        } else {
-            println!("The defending {} is unable to strike back.", unit2.name);
-            println!("The combat ends.");
-            0
-        }
-    } else {
-        println!("The defending {} is killed!", unit2.name);
-        println!("The combat ends.");
-        1
     }
 }

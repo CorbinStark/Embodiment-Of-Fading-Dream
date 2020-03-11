@@ -1,8 +1,5 @@
 use crate::*;
 
-const TILE_SIZE: i32 = 16;
-const SCALE: i32 = 3;
-
 const IDLE_STATE: i32 = 0;
 const MOVE_STATE: i32 = 1;
 const ATTACK_STATE: i32 = 2;
@@ -16,6 +13,7 @@ pub struct Game {
     units: Vec<Unit>,
     enemies: Vec<Unit>,
     sprites: Vec<Texture2D>,
+    timer: i32,
     selected_unit: usize, //index of currently selected unit in map.units
                           //selected_unit: *mut Unit, //mutable pointer to the currently selected unit in the units list
 }
@@ -39,10 +37,10 @@ fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &[(i32, i32)]) {
     //changed from being &Vec<(i32, i32)>
     for tuple in tiles {
         d.draw_rectangle(
-            tuple.0 * TILE_SIZE * SCALE,
-            tuple.1 * TILE_SIZE * SCALE,
-            TILE_SIZE * SCALE,
-            TILE_SIZE * SCALE,
+            (tuple.0 as f32 * TILE_SIZE as f32 * SCALE) as i32,
+            (tuple.1 as f32 * TILE_SIZE as f32 * SCALE) as i32,
+            (TILE_SIZE as f32 * SCALE) as i32,
+            (TILE_SIZE as f32 * SCALE) as i32,
             Color::from((100, 100, 255, 100)),
         );
     }
@@ -54,6 +52,7 @@ impl State for Game {
     }
 
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
+        self.timer += 1;
         //USER INPUT
         if rl.is_key_pressed(KeyboardKey::KEY_BACKSPACE) {
             //Go back to main menu on escape
@@ -68,13 +67,14 @@ impl State for Game {
                 //if mouse position is on top of a unit
                 for i in 0..self.units.len() {
                     let unit = &self.units[i];
-                    if unit.player_owned && unit.ismoused(mouse, TILE_SIZE as f32, SCALE as f32) {
+                    if unit.ismoused(mouse, TILE_SIZE as f32, SCALE as f32) {
                         //  if unit.ismoused(mouse, TILE_SIZE as f32, SCALE as f32) { //Collapsed the statement since it was giving warnings, can undo if neccesary.
                         self.state = MOVE_STATE;
                         self.selected_unit = i;
+                        self.tiles.clear();
                         self.tiles = floodfill(
                             &self.map,
-                            (unit.x / TILE_SIZE, unit.y / TILE_SIZE),
+                            (unit.x / (TILE_SIZE as f32 * SCALE) as i32, unit.y / (TILE_SIZE as f32 * SCALE) as i32),
                             unit.moverange,
                             move_heuristic,
                         );
@@ -88,8 +88,10 @@ impl State for Game {
                 //if mouse over tile
                 if mouse.x > tuple.0 as f32 + self.map.x as f32
                     && mouse.y > tuple.1 as f32 + self.map.y as f32
-                    && mouse.x < tuple.0 as f32 + self.map.x as f32 + (TILE_SIZE * SCALE) as f32
-                    && mouse.y < tuple.1 as f32 + self.map.y as f32 + (TILE_SIZE * SCALE) as f32
+                    && mouse.x
+                        < tuple.0 as f32 + self.map.x as f32 + (TILE_SIZE as f32 * SCALE) as f32
+                    && mouse.y
+                        < tuple.1 as f32 + self.map.y as f32 + (TILE_SIZE as f32 * SCALE) as f32
                 {
                     if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
                         self.units[self.selected_unit].x = tuple.0;
@@ -98,8 +100,8 @@ impl State for Game {
                         self.tiles = floodfill(
                             &self.map,
                             (
-                                self.units[self.selected_unit].x / TILE_SIZE,
-                                self.units[self.selected_unit].y / TILE_SIZE,
+                                self.units[self.selected_unit].x / (TILE_SIZE as f32 * SCALE) as i32,
+                                self.units[self.selected_unit].y / (TILE_SIZE as f32 * SCALE) as i32,
                             ),
                             self.units[self.selected_unit].attackrange,
                             attack_heuristic,
@@ -117,8 +119,10 @@ impl State for Game {
                     i += 1;
                     if mouse.x > u.x as f32 + self.map.x as f32
                         && mouse.y > u.y as f32 + self.map.y as f32
-                        && mouse.x < u.x as f32 + self.map.x as f32 + (TILE_SIZE * SCALE) as f32
-                        && mouse.y < u.y as f32 + self.map.y as f32 + (TILE_SIZE * SCALE) as f32
+                        && mouse.x
+                            < u.x as f32 + self.map.x as f32 + (TILE_SIZE as f32 * SCALE) as f32
+                        && mouse.y
+                            < u.y as f32 + self.map.y as f32 + (TILE_SIZE as f32 * SCALE) as f32
                     {
                         selected_enemy = i;
                     }
@@ -135,8 +139,8 @@ impl State for Game {
         let mut d = rl.begin_drawing(&thread);
         d.clear_background(Color::RAYWHITE);
         self.map.draw(&mut d);
-        for unit in &self.units {
-            unit.draw(&mut d, &self.sprites);
+        for unit in &mut self.units {
+            unit.draw(&mut d, &self.sprites, self.timer);
         }
         draw_tiles(&mut d, &self.tiles);
         if self.state == MOVE_STATE {
@@ -159,7 +163,59 @@ impl Game {
             state: IDLE_STATE,
             units: vec![],
             enemies: vec![],
-            sprites: vec![],
+            sprites: vec![
+                rl.load_texture(thread, "art/skeleton_v2_1.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton_v2_2.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton_v2_3.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton_v2_4.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton2_v2_1.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton2_v2_2.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton2_v2_3.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton2_v2_4.png").unwrap(),
+                rl.load_texture(thread, "art/skull_v2_1.png").unwrap(),
+                rl.load_texture(thread, "art/skull_v2_2.png").unwrap(),
+                rl.load_texture(thread, "art/skull_v2_3.png").unwrap(),
+                rl.load_texture(thread, "art/skull_v2_4.png").unwrap(),
+                rl.load_texture(thread, "art/vampire_v2_1.png").unwrap(),
+                rl.load_texture(thread, "art/vampire_v2_2.png").unwrap(),
+                rl.load_texture(thread, "art/vampire_v2_3.png").unwrap(),
+                rl.load_texture(thread, "art/vampire_v2_4.png").unwrap(),
+            ],
+            timer: 0,
+            selected_unit: 0,
+        }
+    }
+    pub fn from_unit_population(
+        rl: &mut RaylibHandle,
+        thread: &mut RaylibThread,
+        friendlies: Vec<Unit>,
+        enemies: Vec<Unit>,
+    ) -> Self {
+        Game {
+            map: Map::new(25, 25, rl, thread),
+            tiles: vec![],
+            state: IDLE_STATE,
+            units: friendlies,
+            enemies: enemies,
+            sprites: vec![
+                rl.load_texture(thread, "art/skeleton_v2_1.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton_v2_2.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton_v2_3.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton_v2_4.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton2_v2_1.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton2_v2_2.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton2_v2_3.png").unwrap(),
+                rl.load_texture(thread, "art/skeleton2_v2_4.png").unwrap(),
+                rl.load_texture(thread, "art/skull_v2_1.png").unwrap(),
+                rl.load_texture(thread, "art/skull_v2_2.png").unwrap(),
+                rl.load_texture(thread, "art/skull_v2_3.png").unwrap(),
+                rl.load_texture(thread, "art/skull_v2_4.png").unwrap(),
+                rl.load_texture(thread, "art/vampire_v2_1.png").unwrap(),
+                rl.load_texture(thread, "art/vampire_v2_2.png").unwrap(),
+                rl.load_texture(thread, "art/vampire_v2_3.png").unwrap(),
+                rl.load_texture(thread, "art/vampire_v2_4.png").unwrap(),
+            ],
+            timer: 0,
             selected_unit: 0,
         }
     }
