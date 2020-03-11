@@ -134,6 +134,9 @@ impl State for Game {
                 }
             }
         }
+        if rl.is_key_pressed(KeyboardKey::KEY_F2) {
+            return 1;
+        }
 
         //DRAWING
         let mut d = rl.begin_drawing(&thread);
@@ -147,6 +150,20 @@ impl State for Game {
             draw_tiles(&mut d, &self.tiles);
         }
         d.draw_fps(20, 20);
+        d.draw_text(&"F2: Menu".to_string(),
+        220,
+        450,
+        15,
+        Color::WHITE,
+        );
+        d.draw_text(&"Esc: Exit to Windows".to_string(),
+        300,
+        450,
+        15,
+        Color::WHITE,
+        );
+        
+
 
         //Return state change = false
         NO_STATE_CHANGE
