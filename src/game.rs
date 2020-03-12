@@ -150,36 +150,48 @@ impl State for Game {
             return 1;
         }
         let mut attack_moused = false;
+        let mut wait_moused = false;
         if self.state == MENU_STATE {
-
-            //TODO
-            //if player chooses atttack action, then self.nextstate = ATTACK_STATE;
+            //if player chooses attack action, then self.nextstate = ATTACK_STATE;
             //if player chooses wait action, then self.nextstate = WAITING_STATE;
-            //then add some other actions if you wish
-            let rect = Rectangle::new(
+            let attack_button = Rectangle::new(
                 (self.units[self.selected_unit].x + 65) as f32,
                 (self.units[self.selected_unit].y - 20) as f32,
                 75.0,
                 20.0,
             );
-            if mouse.x > rect.x 
-                && mouse.y > rect.y 
-                && mouse.x < rect.x + rect.width 
-                && mouse.y < rect.y + rect.height {
-               attack_moused = true; 
+            let wait_button = Rectangle::new(
+                (self.units[self.selected_unit].x + 65) as f32,
+                (self.units[self.selected_unit].y + 10) as f32,
+                75.0,
+                20.0,
+            );
+
+            if mouse.x > attack_button.x 
+                && mouse.y > attack_button.y 
+                && mouse.x < attack_button.x + attack_button.width 
+                && mouse.y < attack_button.y + attack_button.height {
+                attack_moused = true; 
+                if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
+                    self.nextstate = ATTACK_STATE;
+                    self.state = self.nextstate;
+                }
             }
             else {
                 attack_moused = false;
             }
-            if rl.is_key_pressed(KeyboardKey::KEY_F3) {
-
-
-                self.nextstate = ATTACK_STATE;
-                self.state = self.nextstate;
+            if mouse.x > wait_button.x 
+                && mouse.y > wait_button.y 
+                && mouse.x < wait_button.x + wait_button.width 
+                && mouse.y < wait_button.y + wait_button.height {
+                wait_moused = true; 
+                if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
+                    self.nextstate = WAIT_STATE;
+                    self.state = self.nextstate;
+                }
             }
-            if rl.is_key_pressed(KeyboardKey::KEY_F4) {
-                self.nextstate = WAITING_STATE;
-                self.state = self.nextstate;
+            else {
+                wait_moused = false;
             }
         }
 
@@ -239,15 +251,24 @@ impl State for Game {
                 self.units[self.selected_unit].y - 20,
                 20,
                 Color::BLACK,
-                );
-            
+                ); 
             }
-            d.draw_text(&"Wait".to_string(),
-            self.units[self.selected_unit].x + 65,
-            self.units[self.selected_unit].y + 10,
-            20,
-            Color::BLACK,
-            );
+            if  wait_moused {
+                d.draw_text(&"Wait".to_string(),
+                self.units[self.selected_unit].x + 65,
+                self.units[self.selected_unit].y + 10,
+                20,
+                Color::RED,
+                );
+            }
+            else {
+                d.draw_text(&"Wait".to_string(),
+                self.units[self.selected_unit].x + 65,
+                self.units[self.selected_unit].y + 10,
+                20,
+                Color::BLACK,
+                ); 
+            }
         }
         //Menu test 
         
