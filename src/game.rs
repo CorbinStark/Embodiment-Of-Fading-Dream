@@ -15,8 +15,8 @@ pub struct Game {
     enemies: Vec<Unit>,
     sprites: Vec<Texture2D>,
     timer: i32,
-    selected_unit: usize, //index of currently selected unit in map.units
-                          //selected_unit: *mut Unit, //mutable pointer to the currently selected unit in the units list
+    selected_unit: usize,               //index of currently selected unit in map.units
+    prev_position: (i32, i32),          //selected_unit: *mut Unit, //mutable pointer to the currently selected unit in the units list
 }
 
 fn move_heuristic(id: i32) -> i32 {
@@ -133,6 +133,8 @@ impl State for Game {
                         && mouse.x < tile_x + TILE_SCALED
                         && mouse.y < tile_y + TILE_SCALED
                     {
+                        self.prev_position.0 = self.units[self.selected_unit].x;
+                        self.prev_position.1 = self.units[self.selected_unit].y;
                         self.units[self.selected_unit].x = tile_x as i32;
                         self.units[self.selected_unit].y = tile_y as i32;
                         self.nextstate = MENU_STATE;
@@ -153,6 +155,10 @@ impl State for Game {
         }
 
         if self.state == ATTACK_STATE {
+            if rl.is_mouse_button_pressed(MouseButton::MOUSE_RIGHT_BUTTON) {
+                self.nextstate = MENU_STATE;
+                self.state = self.nextstate;
+            }
             if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
                 //do attack
                 let mut selected_enemy: i32 = -1;
@@ -185,6 +191,14 @@ impl State for Game {
         if self.state == MENU_STATE {
             //if player chooses attack action, then self.nextstate = ATTACK_STATE;
             //if player chooses wait action, then self.nextstate = WAITING_STATE;
+           
+            //go back to previous state
+            if rl.is_mouse_button_pressed(MouseButton::MOUSE_RIGHT_BUTTON) {
+                self.nextstate = MOVE_STATE;
+                self.units[self.selected_unit].x = self.prev_position.0;
+                self.units[self.selected_unit].y = self.prev_position.1;
+                self.state = self.nextstate;
+            }
             let attack_button = Rectangle::new(
                 (self.units[self.selected_unit].x + 65) as f32,
                 (self.units[self.selected_unit].y - 20) as f32,
@@ -335,6 +349,7 @@ impl Game {
             ],
             timer: 0,
             selected_unit: 0,
+            prev_position: (0, 0),
         }
     }
     pub fn from_unit_population(
@@ -370,6 +385,7 @@ impl Game {
             ],
             timer: 0,
             selected_unit: 0,
+            prev_position: (0, 0),
         }
     }
 }
