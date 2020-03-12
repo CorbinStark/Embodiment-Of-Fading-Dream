@@ -117,6 +117,9 @@ impl State for Game {
                 }
             }
         }
+        if self.state == WAITING_STATE {
+            self.nextstate = IDLE_STATE;
+        }
 
         if self.state == MOVE_STATE {
             if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
@@ -171,6 +174,7 @@ impl State for Game {
                     let damage = player.get_damage();
                     self.enemies[selected_enemy as usize].health -= damage;
                 }
+                self.nextstate = IDLE_STATE;
             }
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F2) {
@@ -295,9 +299,6 @@ impl State for Game {
                 );
             }
         }
-        //Menu test
-
-        //end menu test
         //Return state change = false
         NO_STATE_CHANGE
     }
