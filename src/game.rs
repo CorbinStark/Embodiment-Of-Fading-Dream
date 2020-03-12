@@ -193,13 +193,13 @@ impl State for Game {
         Color::WHITE,
         );
         if self.state == MENU_STATE {
-            d.draw_text(&"1: Attack".to_string(),
+            d.draw_text(&"F3: Attack".to_string(),
             220,
             20,
             15,
             Color::WHITE,
             );
-            d.draw_text(&"2: Wait".to_string(),
+            d.draw_text(&"F4: Wait".to_string(),
             300,
             20,
             15,
