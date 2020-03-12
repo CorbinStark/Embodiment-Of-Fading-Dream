@@ -149,14 +149,31 @@ impl State for Game {
         if rl.is_key_pressed(KeyboardKey::KEY_F2) {
             return 1;
         }
-
+        let mut attack_moused = false;
         if self.state == MENU_STATE {
 
             //TODO
             //if player chooses atttack action, then self.nextstate = ATTACK_STATE;
             //if player chooses wait action, then self.nextstate = WAITING_STATE;
             //then add some other actions if you wish
+            let rect = Rectangle::new(
+                (self.units[self.selected_unit].x + 65) as f32,
+                (self.units[self.selected_unit].y - 20) as f32,
+                75.0,
+                20.0,
+            );
+            if mouse.x > rect.x 
+                && mouse.y > rect.y 
+                && mouse.x < rect.x + rect.width 
+                && mouse.y < rect.y + rect.height {
+               attack_moused = true; 
+            }
+            else {
+                attack_moused = false;
+            }
             if rl.is_key_pressed(KeyboardKey::KEY_F3) {
+
+
                 self.nextstate = ATTACK_STATE;
                 self.state = self.nextstate;
             }
@@ -208,12 +225,23 @@ impl State for Game {
                 140,
                 Color::BLACK
                 );
-            d.draw_text(&"Attack".to_string(),
-            self.units[self.selected_unit].x + 65,
-            self.units[self.selected_unit].y - 20,
-            20,
-            Color::BLACK,
-            );
+            if attack_moused {
+                d.draw_text(&"Attack".to_string(),
+                self.units[self.selected_unit].x + 65,
+                self.units[self.selected_unit].y - 20,
+                20,
+                Color::RED,
+                );
+            }
+            else {
+                d.draw_text(&"Attack".to_string(),
+                self.units[self.selected_unit].x + 65,
+                self.units[self.selected_unit].y - 20,
+                20,
+                Color::BLACK,
+                );
+            
+            }
             d.draw_text(&"Wait".to_string(),
             self.units[self.selected_unit].x + 65,
             self.units[self.selected_unit].y + 10,
