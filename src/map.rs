@@ -4,6 +4,7 @@ use std::fs::File;
 use std::io::prelude::*;
 pub const TILE_SIZE: i32 = 16;
 pub const SCALE: f32 = 3.0;
+pub const TILE_SCALED: f32 = TILE_SIZE as f32 * SCALE;
 
 pub struct Map {
     pub grid: Vec<Vec<i32>>, //2d array (2d vec) of i32 (IDs) that correspond to tile types (textures for the tiles, wall, ground, etc.)

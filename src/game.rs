@@ -3,13 +3,14 @@ use crate::*;
 const IDLE_STATE: i32 = 0;
 const MOVE_STATE: i32 = 1;
 const ATTACK_STATE: i32 = 2;
-//const WAITING_STATE: i32 = 3;
-//const MENU_STATE: i32 = 4;
+const MENU_STATE: i32 = 3;
+const WAITING_STATE: i32 = 4;
 
 pub struct Game {
     map: Map,
     tiles: Vec<(i32, i32)>,
     state: i32,
+    nextstate: i32,
     units: Vec<Unit>,
     enemies: Vec<Unit>,
     sprites: Vec<Texture2D>,
@@ -33,7 +34,7 @@ fn attack_heuristic(id: i32) -> i32 {
 }
 
 //Was very iffy about changing this but things still work. Apparently this will allow it to work with non Vec-based slices according to clippy
-fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &[(i32, i32)]) {
+fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &[(i32, i32)], color: Color) {
     //changed from being &Vec<(i32, i32)>
     for tuple in tiles {
         d.draw_rectangle(
@@ -41,14 +42,13 @@ fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &[(i32, i32)]) {
             (tuple.1 as f32 * TILE_SIZE as f32 * SCALE) as i32,
             (TILE_SIZE as f32 * SCALE) as i32,
             (TILE_SIZE as f32 * SCALE) as i32,
-            Color::from((100, 100, 255, 100)),
+            color,
         );
     }
 }
 #[allow(clippy::collapsible_if)]
 impl State for Game {
     fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {
-        self.tiles = floodfill(&self.map, (3, 3), 4, move_heuristic);
     }
 
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
@@ -61,6 +61,13 @@ impl State for Game {
         let mouse = rl.get_mouse_position();
         if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {}
 
+        if self.nextstate != -1 {
+            if rl.is_mouse_button_released(MouseButton::MOUSE_LEFT_BUTTON) {
+                self.state = self.nextstate;
+                self.nextstate = -1;
+            }
+        }
+
         if self.state == IDLE_STATE {
             //Select a friendly unit
             if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
@@ -69,12 +76,15 @@ impl State for Game {
                     let unit = &self.units[i];
                     if unit.ismoused(mouse, TILE_SIZE as f32, SCALE as f32) {
                         //  if unit.ismoused(mouse, TILE_SIZE as f32, SCALE as f32) { //Collapsed the statement since it was giving warnings, can undo if neccesary.
-                        self.state = MOVE_STATE;
+                        self.nextstate = MOVE_STATE;
                         self.selected_unit = i;
                         self.tiles.clear();
                         self.tiles = floodfill(
                             &self.map,
-                            (unit.x / (TILE_SIZE as f32 * SCALE) as i32, unit.y / (TILE_SIZE as f32 * SCALE) as i32),
+                            (
+                                unit.x / (TILE_SIZE as f32 * SCALE) as i32,
+                                unit.y / (TILE_SIZE as f32 * SCALE) as i32,
+                            ),
                             unit.moverange,
                             move_heuristic,
                         );
@@ -83,25 +93,26 @@ impl State for Game {
                 }
             }
         }
+
         if self.state == MOVE_STATE {
-            for tuple in &self.tiles.clone() {
-                //if mouse over tile
-                if mouse.x > tuple.0 as f32 + self.map.x as f32
-                    && mouse.y > tuple.1 as f32 + self.map.y as f32
-                    && mouse.x
-                        < tuple.0 as f32 + self.map.x as f32 + (TILE_SIZE as f32 * SCALE) as f32
-                    && mouse.y
-                        < tuple.1 as f32 + self.map.y as f32 + (TILE_SIZE as f32 * SCALE) as f32
-                {
-                    if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
-                        self.units[self.selected_unit].x = tuple.0;
-                        self.units[self.selected_unit].y = tuple.1;
-                        self.state = ATTACK_STATE;
+            if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
+                for tuple in &self.tiles.clone() {
+                    //if mouse over tile
+                    let tile_x = tuple.0 as f32 * TILE_SCALED;
+                    let tile_y = tuple.1 as f32 * TILE_SCALED;
+
+                    if mouse.x > tile_x && mouse.y > tile_y && mouse.x < tile_x + TILE_SCALED && mouse.y < tile_y + TILE_SCALED
+                    {
+                        self.units[self.selected_unit].x = tile_x as i32;
+                        self.units[self.selected_unit].y = tile_y as i32;
+                        self.nextstate = MENU_STATE;
                         self.tiles = floodfill(
                             &self.map,
                             (
-                                self.units[self.selected_unit].x / (TILE_SIZE as f32 * SCALE) as i32,
-                                self.units[self.selected_unit].y / (TILE_SIZE as f32 * SCALE) as i32,
+                                self.units[self.selected_unit].x
+                                    / (TILE_SIZE as f32 * SCALE) as i32,
+                                self.units[self.selected_unit].y
+                                    / (TILE_SIZE as f32 * SCALE) as i32,
                             ),
                             self.units[self.selected_unit].attackrange,
                             attack_heuristic,
@@ -110,6 +121,7 @@ impl State for Game {
                 }
             }
         }
+
         if self.state == ATTACK_STATE {
             if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
                 //do attack
@@ -134,6 +146,54 @@ impl State for Game {
                 }
             }
         }
+        if rl.is_key_pressed(KeyboardKey::KEY_F2) {
+            return 1;
+        }
+        let mut attack_moused = false;
+        let mut wait_moused = false;
+        if self.state == MENU_STATE {
+            //if player chooses attack action, then self.nextstate = ATTACK_STATE;
+            //if player chooses wait action, then self.nextstate = WAITING_STATE;
+            let attack_button = Rectangle::new(
+                (self.units[self.selected_unit].x + 65) as f32,
+                (self.units[self.selected_unit].y - 20) as f32,
+                75.0,
+                20.0,
+            );
+            let wait_button = Rectangle::new(
+                (self.units[self.selected_unit].x + 65) as f32,
+                (self.units[self.selected_unit].y + 10) as f32,
+                75.0,
+                20.0,
+            );
+
+            if mouse.x > attack_button.x 
+                && mouse.y > attack_button.y 
+                && mouse.x < attack_button.x + attack_button.width 
+                && mouse.y < attack_button.y + attack_button.height {
+                attack_moused = true; 
+                if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
+                    self.nextstate = ATTACK_STATE;
+                    self.state = self.nextstate;
+                }
+            }
+            else {
+                attack_moused = false;
+            }
+            if mouse.x > wait_button.x 
+                && mouse.y > wait_button.y 
+                && mouse.x < wait_button.x + wait_button.width 
+                && mouse.y < wait_button.y + wait_button.height {
+                wait_moused = true; 
+                if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
+                    self.nextstate = WAITING_STATE;
+                    self.state = self.nextstate;
+                }
+            }
+            else {
+                wait_moused = false;
+            }
+        }
 
         //DRAWING
         let mut d = rl.begin_drawing(&thread);
@@ -142,12 +202,80 @@ impl State for Game {
         for unit in &mut self.units {
             unit.draw(&mut d, &self.sprites, self.timer);
         }
-        draw_tiles(&mut d, &self.tiles);
+
         if self.state == MOVE_STATE {
-            draw_tiles(&mut d, &self.tiles);
+            draw_tiles(&mut d, &self.tiles, Color::from((100, 100, 255, 100)));
+        }
+        if self.state == ATTACK_STATE {
+            draw_tiles(&mut d, &self.tiles, Color::from((255, 100, 100, 100)));
         }
         d.draw_fps(20, 20);
+        d.draw_text(&"F2: Menu".to_string(),
+        220,
+        450,
+        15,
+        Color::WHITE,
+        );
+        d.draw_text(&"Esc: Exit to Windows".to_string(),
+        300,
+        450,
+        15,
+        Color::WHITE,
+        );
+        if self.state == MENU_STATE {
+            d.draw_rectangle(
+                self.units[self.selected_unit].x + 50, 
+                self.units[self.selected_unit].y - 40, 
+                100, 
+                160,
+                Color::WHITE
+                );
+            d.draw_rectangle_lines(
+                self.units[self.selected_unit].x + 60, 
+                self.units[self.selected_unit].y - 30, 
+                80, 
+                140,
+                Color::BLACK
+                );
+            if attack_moused {
+                d.draw_text(&"Attack".to_string(),
+                self.units[self.selected_unit].x + 65,
+                self.units[self.selected_unit].y - 20,
+                20,
+                Color::RED,
+                );
+            }
+            else {
+                d.draw_text(&"Attack".to_string(),
+                self.units[self.selected_unit].x + 65,
+                self.units[self.selected_unit].y - 20,
+                20,
+                Color::BLACK,
+                ); 
+            }
+            if  wait_moused {
+                d.draw_text(&"Wait".to_string(),
+                self.units[self.selected_unit].x + 65,
+                self.units[self.selected_unit].y + 10,
+                20,
+                Color::RED,
+                );
+            }
+            else {
+                d.draw_text(&"Wait".to_string(),
+                self.units[self.selected_unit].x + 65,
+                self.units[self.selected_unit].y + 10,
+                20,
+                Color::BLACK,
+                ); 
+            }
+        }
+        //Menu test 
+        
 
+
+
+        //end menu test
         //Return state change = false
         NO_STATE_CHANGE
     }
@@ -161,6 +289,7 @@ impl Game {
             map: Map::new(25, 25, rl, thread),
             tiles: vec![],
             state: IDLE_STATE,
+            nextstate: -1,
             units: vec![],
             enemies: vec![],
             sprites: vec![
@@ -195,6 +324,7 @@ impl Game {
             map: Map::new(25, 25, rl, thread),
             tiles: vec![],
             state: IDLE_STATE,
+            nextstate: -1,
             units: friendlies,
             enemies: enemies,
             sprites: vec![
