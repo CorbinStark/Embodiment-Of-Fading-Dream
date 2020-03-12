@@ -20,9 +20,34 @@ pub struct Game {
 }
 
 fn move_heuristic(id: i32) -> i32 {
-    if id == 0 {
+    //return -1 for wall tiles (quite a few of them lol)
+    if id >= 0 && id <= 5 {
         return -1;
     }
+    if id >= 10 && id <= 15 {
+        return -1;
+    }
+    if id >= 20 && id <= 25 {
+        return -1;
+    }
+    if id >= 30 && id <= 35 {
+        return -1;
+    }
+    if id >= 40 && id <= 45 {
+        return -1;
+    }
+    if id >= 50 && id <= 55 {
+        return -1;
+    }
+    if id >= 60 && id <= 65 {
+        return -1;
+    }
+    //return -1 for misc items like chests
+    if id == 90 {
+        return -1;
+    }
+
+    //return 1 if anything else
     1 //1 is default cost if not defined
 }
 
@@ -48,8 +73,7 @@ fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &[(i32, i32)], color: Color) {
 }
 #[allow(clippy::collapsible_if)]
 impl State for Game {
-    fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {
-    }
+    fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
 
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
         self.timer += 1;
@@ -101,7 +125,10 @@ impl State for Game {
                     let tile_x = tuple.0 as f32 * TILE_SCALED;
                     let tile_y = tuple.1 as f32 * TILE_SCALED;
 
-                    if mouse.x > tile_x && mouse.y > tile_y && mouse.x < tile_x + TILE_SCALED && mouse.y < tile_y + TILE_SCALED
+                    if mouse.x > tile_x
+                        && mouse.y > tile_y
+                        && mouse.x < tile_x + TILE_SCALED
+                        && mouse.y < tile_y + TILE_SCALED
                     {
                         self.units[self.selected_unit].x = tile_x as i32;
                         self.units[self.selected_unit].y = tile_y as i32;
@@ -167,30 +194,30 @@ impl State for Game {
                 20.0,
             );
 
-            if mouse.x > attack_button.x 
-                && mouse.y > attack_button.y 
-                && mouse.x < attack_button.x + attack_button.width 
-                && mouse.y < attack_button.y + attack_button.height {
-                attack_moused = true; 
+            if mouse.x > attack_button.x
+                && mouse.y > attack_button.y
+                && mouse.x < attack_button.x + attack_button.width
+                && mouse.y < attack_button.y + attack_button.height
+            {
+                attack_moused = true;
                 if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
                     self.nextstate = ATTACK_STATE;
                     self.state = self.nextstate;
                 }
-            }
-            else {
+            } else {
                 attack_moused = false;
             }
-            if mouse.x > wait_button.x 
-                && mouse.y > wait_button.y 
-                && mouse.x < wait_button.x + wait_button.width 
-                && mouse.y < wait_button.y + wait_button.height {
-                wait_moused = true; 
+            if mouse.x > wait_button.x
+                && mouse.y > wait_button.y
+                && mouse.x < wait_button.x + wait_button.width
+                && mouse.y < wait_button.y + wait_button.height
+            {
+                wait_moused = true;
                 if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
                     self.nextstate = WAITING_STATE;
                     self.state = self.nextstate;
                 }
-            }
-            else {
+            } else {
                 wait_moused = false;
             }
         }
@@ -210,70 +237,65 @@ impl State for Game {
             draw_tiles(&mut d, &self.tiles, Color::from((255, 100, 100, 100)));
         }
         d.draw_fps(20, 20);
-        d.draw_text(&"F2: Menu".to_string(),
-        220,
-        450,
-        15,
-        Color::WHITE,
-        );
-        d.draw_text(&"Esc: Exit to Windows".to_string(),
-        300,
-        450,
-        15,
-        Color::WHITE,
+        d.draw_text(&"F2: Menu".to_string(), 220, 450, 15, Color::WHITE);
+        d.draw_text(
+            &"Esc: Exit to Windows".to_string(),
+            300,
+            450,
+            15,
+            Color::WHITE,
         );
         if self.state == MENU_STATE {
             d.draw_rectangle(
-                self.units[self.selected_unit].x + 50, 
-                self.units[self.selected_unit].y - 40, 
-                100, 
+                self.units[self.selected_unit].x + 50,
+                self.units[self.selected_unit].y - 40,
+                100,
                 160,
-                Color::WHITE
-                );
+                Color::WHITE,
+            );
             d.draw_rectangle_lines(
-                self.units[self.selected_unit].x + 60, 
-                self.units[self.selected_unit].y - 30, 
-                80, 
+                self.units[self.selected_unit].x + 60,
+                self.units[self.selected_unit].y - 30,
+                80,
                 140,
-                Color::BLACK
-                );
+                Color::BLACK,
+            );
             if attack_moused {
-                d.draw_text(&"Attack".to_string(),
-                self.units[self.selected_unit].x + 65,
-                self.units[self.selected_unit].y - 20,
-                20,
-                Color::RED,
+                d.draw_text(
+                    &"Attack".to_string(),
+                    self.units[self.selected_unit].x + 65,
+                    self.units[self.selected_unit].y - 20,
+                    20,
+                    Color::RED,
+                );
+            } else {
+                d.draw_text(
+                    &"Attack".to_string(),
+                    self.units[self.selected_unit].x + 65,
+                    self.units[self.selected_unit].y - 20,
+                    20,
+                    Color::BLACK,
                 );
             }
-            else {
-                d.draw_text(&"Attack".to_string(),
-                self.units[self.selected_unit].x + 65,
-                self.units[self.selected_unit].y - 20,
-                20,
-                Color::BLACK,
-                ); 
-            }
-            if  wait_moused {
-                d.draw_text(&"Wait".to_string(),
-                self.units[self.selected_unit].x + 65,
-                self.units[self.selected_unit].y + 10,
-                20,
-                Color::RED,
+            if wait_moused {
+                d.draw_text(
+                    &"Wait".to_string(),
+                    self.units[self.selected_unit].x + 65,
+                    self.units[self.selected_unit].y + 10,
+                    20,
+                    Color::RED,
                 );
-            }
-            else {
-                d.draw_text(&"Wait".to_string(),
-                self.units[self.selected_unit].x + 65,
-                self.units[self.selected_unit].y + 10,
-                20,
-                Color::BLACK,
-                ); 
+            } else {
+                d.draw_text(
+                    &"Wait".to_string(),
+                    self.units[self.selected_unit].x + 65,
+                    self.units[self.selected_unit].y + 10,
+                    20,
+                    Color::BLACK,
+                );
             }
         }
-        //Menu test 
-        
-
-
+        //Menu test
 
         //end menu test
         //Return state change = false
