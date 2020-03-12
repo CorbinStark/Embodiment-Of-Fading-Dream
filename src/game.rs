@@ -151,6 +151,7 @@ impl State for Game {
         }
 
         if self.state == MENU_STATE {
+
             //TODO
             //if player chooses atttack action, then self.nextstate = ATTACK_STATE;
             //if player chooses wait action, then self.nextstate = WAITING_STATE;
@@ -193,19 +194,39 @@ impl State for Game {
         Color::WHITE,
         );
         if self.state == MENU_STATE {
-            d.draw_text(&"F3: Attack".to_string(),
-            220,
+            d.draw_rectangle(
+                self.units[self.selected_unit].x + 50, 
+                self.units[self.selected_unit].y - 40, 
+                100, 
+                160,
+                Color::WHITE
+                );
+            d.draw_rectangle_lines(
+                self.units[self.selected_unit].x + 60, 
+                self.units[self.selected_unit].y - 30, 
+                80, 
+                140,
+                Color::BLACK
+                );
+            d.draw_text(&"Attack".to_string(),
+            self.units[self.selected_unit].x + 65,
+            self.units[self.selected_unit].y - 20,
             20,
-            15,
-            Color::WHITE,
+            Color::BLACK,
             );
-            d.draw_text(&"F4: Wait".to_string(),
-            300,
+            d.draw_text(&"Wait".to_string(),
+            self.units[self.selected_unit].x + 65,
+            self.units[self.selected_unit].y + 10,
             20,
-            15,
-            Color::WHITE,
+            Color::BLACK,
             );
         }
+        //Menu test 
+        
+
+
+
+        //end menu test
         //Return state change = false
         NO_STATE_CHANGE
     }
