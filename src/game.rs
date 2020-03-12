@@ -122,7 +122,7 @@ impl State for Game {
                 self.nextstate = MENU_STATE;
                 self.state = self.nextstate;
             }
-            //self.nextstate = IDLE_STATE;
+            self.nextstate = IDLE_STATE;
         }
 
         if self.state == MOVE_STATE {
@@ -185,7 +185,7 @@ impl State for Game {
                     let damage = player.get_damage();
                     self.enemies[selected_enemy as usize].health -= damage;
                 }
-                //self.nextstate = IDLE_STATE;
+                self.nextstate = IDLE_STATE;
             }
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F2) {
