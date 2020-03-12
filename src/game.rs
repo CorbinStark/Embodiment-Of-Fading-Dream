@@ -118,7 +118,11 @@ impl State for Game {
             }
         }
         if self.state == WAITING_STATE {
-            self.nextstate = IDLE_STATE;
+            if rl.is_mouse_button_pressed(MouseButton::MOUSE_RIGHT_BUTTON) {
+                self.nextstate = MENU_STATE;
+                self.state = self.nextstate;
+            }
+            //self.nextstate = IDLE_STATE;
         }
 
         if self.state == MOVE_STATE {
@@ -155,6 +159,7 @@ impl State for Game {
         }
 
         if self.state == ATTACK_STATE {
+            //back to previous state
             if rl.is_mouse_button_pressed(MouseButton::MOUSE_RIGHT_BUTTON) {
                 self.nextstate = MENU_STATE;
                 self.state = self.nextstate;
@@ -180,7 +185,7 @@ impl State for Game {
                     let damage = player.get_damage();
                     self.enemies[selected_enemy as usize].health -= damage;
                 }
-                self.nextstate = IDLE_STATE;
+                //self.nextstate = IDLE_STATE;
             }
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F2) {
@@ -194,7 +199,7 @@ impl State for Game {
            
             //go back to previous state
             if rl.is_mouse_button_pressed(MouseButton::MOUSE_RIGHT_BUTTON) {
-                self.nextstate = MOVE_STATE;
+                self.nextstate = IDLE_STATE;
                 self.units[self.selected_unit].x = self.prev_position.0;
                 self.units[self.selected_unit].y = self.prev_position.1;
                 self.state = self.nextstate;
