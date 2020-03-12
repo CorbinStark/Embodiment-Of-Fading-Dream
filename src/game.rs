@@ -186,7 +186,7 @@ impl State for Game {
                 && mouse.y < wait_button.y + wait_button.height {
                 wait_moused = true; 
                 if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
-                    self.nextstate = WAIT_STATE;
+                    self.nextstate = WAITING_STATE;
                     self.state = self.nextstate;
                 }
             }
