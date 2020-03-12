@@ -105,7 +105,7 @@ impl State for Game {
                     {
                         self.units[self.selected_unit].x = tile_x as i32;
                         self.units[self.selected_unit].y = tile_y as i32;
-                        self.nextstate = ATTACK_STATE;
+                        self.nextstate = MENU_STATE;
                         self.tiles = floodfill(
                             &self.map,
                             (
@@ -146,12 +146,23 @@ impl State for Game {
                 }
             }
         }
+        if rl.is_key_pressed(KeyboardKey::KEY_F2) {
+            return 1;
+        }
 
         if self.state == MENU_STATE {
             //TODO
             //if player chooses atttack action, then self.nextstate = ATTACK_STATE;
             //if player chooses wait action, then self.nextstate = WAITING_STATE;
             //then add some other actions if you wish
+            if rl.is_key_pressed(KeyboardKey::KEY_F3) {
+                self.nextstate = ATTACK_STATE;
+                self.state = self.nextstate;
+            }
+            if rl.is_key_pressed(KeyboardKey::KEY_F4) {
+                self.nextstate = WAITING_STATE;
+                self.state = self.nextstate;
+            }
         }
 
         //DRAWING
@@ -169,7 +180,32 @@ impl State for Game {
             draw_tiles(&mut d, &self.tiles, Color::from((255, 100, 100, 100)));
         }
         d.draw_fps(20, 20);
-
+        d.draw_text(&"F2: Menu".to_string(),
+        220,
+        450,
+        15,
+        Color::WHITE,
+        );
+        d.draw_text(&"Esc: Exit to Windows".to_string(),
+        300,
+        450,
+        15,
+        Color::WHITE,
+        );
+        if self.state == MENU_STATE {
+            d.draw_text(&"F3: Attack".to_string(),
+            220,
+            20,
+            15,
+            Color::WHITE,
+            );
+            d.draw_text(&"F4: Wait".to_string(),
+            300,
+            20,
+            15,
+            Color::WHITE,
+            );
+        }
         //Return state change = false
         NO_STATE_CHANGE
     }
