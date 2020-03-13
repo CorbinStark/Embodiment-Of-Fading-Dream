@@ -145,3 +145,7 @@ impl Unit {
             && mouse.y < self.y as f32 + (tile_size * scale)
     }
 }
+
+#[cfg(test)]
+mod tests {
+}
