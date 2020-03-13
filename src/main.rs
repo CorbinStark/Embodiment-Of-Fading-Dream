@@ -28,12 +28,14 @@ fn main() {
     rl.set_target_fps(60);
 
     //Hardcode the units for the time being
-    let friendlies: Vec<Unit> = vec![Unit::new_custom(
-        0, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 5, 5,
-    )];
-    let enemies: Vec<Unit> = vec![Unit::new_custom(
-        0, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 2, 2,
-    )];
+    let friendlies: Vec<Unit> = vec![
+        Unit::new_custom(0, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 5, 8),
+        Unit::new_custom(3, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 6, 8),
+    ];
+    let enemies: Vec<Unit> = vec![
+        Unit::new_custom(1, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 3, 2),
+        Unit::new_custom(2, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 6, 2),
+    ];
 
     //Initialize states
     let game = Box::new(Game::from_unit_population(

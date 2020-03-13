@@ -15,8 +15,8 @@ pub struct Game {
     enemies: Vec<Unit>,
     sprites: Vec<Texture2D>,
     timer: i32,
-    selected_unit: usize,               //index of currently selected unit in map.units
-    prev_position: (i32, i32),          //selected_unit: *mut Unit, //mutable pointer to the currently selected unit in the units list
+    selected_unit: usize,      //index of currently selected unit in map.units
+    prev_position: (i32, i32), //selected_unit: *mut Unit, //mutable pointer to the currently selected unit in the units list
 }
 
 fn move_heuristic(id: i32) -> i32 {
@@ -63,10 +63,10 @@ fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &[(i32, i32)], color: Color) {
     //changed from being &Vec<(i32, i32)>
     for tuple in tiles {
         d.draw_rectangle(
-            (tuple.0 as f32 * TILE_SIZE as f32 * SCALE) as i32,
-            (tuple.1 as f32 * TILE_SIZE as f32 * SCALE) as i32,
-            (TILE_SIZE as f32 * SCALE) as i32,
-            (TILE_SIZE as f32 * SCALE) as i32,
+            (tuple.0 as f32 * TILE_SIZE as f32 * SCALE) as i32 + 2,
+            (tuple.1 as f32 * TILE_SIZE as f32 * SCALE) as i32 + 2,
+            (TILE_SIZE as f32 * SCALE) as i32 - 2,
+            (TILE_SIZE as f32 * SCALE) as i32 - 2,
             color,
         );
     }
@@ -180,10 +180,10 @@ impl State for Game {
                         selected_enemy = i;
                     }
                 }
-                if selected_enemy > 0 {
+                if selected_enemy > -1 {
                     let player = &self.units[self.selected_unit];
                     let damage = player.get_damage();
-                    self.enemies[selected_enemy as usize].health -= damage;
+                    self.enemies[selected_enemy as usize - 1].health -= damage;
                 }
                 self.nextstate = IDLE_STATE;
             }
@@ -196,7 +196,7 @@ impl State for Game {
         if self.state == MENU_STATE {
             //if player chooses attack action, then self.nextstate = ATTACK_STATE;
             //if player chooses wait action, then self.nextstate = WAITING_STATE;
-           
+
             //go back to previous state
             if rl.is_mouse_button_pressed(MouseButton::MOUSE_RIGHT_BUTTON) {
                 self.nextstate = IDLE_STATE;
@@ -251,6 +251,37 @@ impl State for Game {
         self.map.draw(&mut d);
         for unit in &mut self.units {
             unit.draw(&mut d, &self.sprites, self.timer);
+            d.draw_rectangle(
+                unit.x,
+                unit.y - 15,
+                TILE_SCALED as i32 - 5,
+                15,
+                Color::BLACK,
+            );
+            d.draw_rectangle(
+                unit.x + 2,
+                unit.y - 13,
+                (unit.health / unit.maxhealth) * (TILE_SCALED as i32 - 8),
+                12,
+                Color::GREEN,
+            );
+        }
+        for unit in &mut self.enemies {
+            unit.draw(&mut d, &self.sprites, self.timer);
+            d.draw_rectangle(
+                unit.x,
+                unit.y - 15,
+                TILE_SCALED as i32 - 5,
+                15,
+                Color::BLACK,
+            );
+            d.draw_rectangle(
+                unit.x + 2,
+                unit.y - 13,
+                (unit.health / unit.maxhealth) * (TILE_SCALED as i32 - 8),
+                12,
+                Color::RED,
+            );
         }
 
         if self.state == MOVE_STATE {
