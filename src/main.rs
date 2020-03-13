@@ -29,8 +29,8 @@ fn main() {
 
     //Hardcode the units for the time being
     let friendlies: Vec<Unit> = vec![
-        Unit::new_custom(0, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 5, 8),
-        Unit::new_custom(3, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 6, 8),
+        Unit::new_custom(0, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 5, 7),
+        Unit::new_custom(3, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 6, 7),
     ];
     let enemies: Vec<Unit> = vec![
         Unit::new_custom(1, "skeleton", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 3, 2),

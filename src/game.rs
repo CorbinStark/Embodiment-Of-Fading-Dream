@@ -21,6 +21,12 @@ pub struct Game {
 
 fn move_heuristic(id: i32) -> i32 {
     //return -1 for wall tiles (quite a few of them lol)
+    if id >= 21 && id <= 24 {
+        return 1;
+    }
+    if id >= 31 && id <= 34 {
+        return 1;
+    }
     if id >= 0 && id <= 5 {
         return -1;
     }
@@ -73,7 +79,9 @@ fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &[(i32, i32)], color: Color) {
 }
 #[allow(clippy::collapsible_if)]
 impl State for Game {
-    fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
+    fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {
+        self.map.load();
+    }
 
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
         self.timer += 1;
