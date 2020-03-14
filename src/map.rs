@@ -15,7 +15,6 @@ pub struct Map {
     pub tiles: Texture2D,
 }
 
-#[allow(clippy::needless_range_loop)]
 impl Map {
     pub fn new(
         width: usize,
@@ -122,7 +121,7 @@ impl FillNode {
         FillNode { x, y, depth }
     }
 }
-#[allow(clippy::too_many_arguments)] //Perhaps fix this later with another func or struct so we don't need an exception.
+
 fn add_fill_node(
     map: &Map,
     dx: i32,
