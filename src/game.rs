@@ -403,3 +403,20 @@ impl Game {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_move_heuristic() {
+        assert_eq!(move_heuristic(3), -1);
+        assert_eq!(move_heuristic(46), 1);
+        assert_eq!(move_heuristic(0), -1);
+    }
+    #[test]
+    fn test_attack_heuristic() {
+        assert_eq!(attack_heuristic(0), -1);
+        assert_eq!(attack_heuristic(1), 1);
+    }
+}
