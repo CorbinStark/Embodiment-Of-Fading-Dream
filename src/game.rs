@@ -20,13 +20,14 @@ pub struct Game {
 }
 
 fn move_heuristic(id: i32) -> i32 {
-    //return -1 for wall tiles (quite a few of them lol)
+    //return 1 for ground tiles
     if id >= 21 && id <= 24 {
         return 1;
     }
     if id >= 31 && id <= 34 {
         return 1;
     }
+    //return -1 for wall tiles (quite a few of them lol)
     if id >= 0 && id <= 5 {
         return -1;
     }

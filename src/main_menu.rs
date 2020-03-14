@@ -62,6 +62,8 @@ impl State for MainMenu {
             Color::WHITE,
         );
         d.draw_texture(&mut self.mask, 0, 0, Color::WHITE);
+        d.draw_text("Use arrow keys to change", 450, 425, 14, Color::WHITE);
+        d.draw_text("selection, enter to select", 450, 445, 14, Color::WHITE);
         d.draw_text("Embodiment of Fading", 50, 15, 55, Color::WHITE);
         d.draw_text("Dream", 50, 75, 55, Color::WHITE);
 
