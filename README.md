@@ -18,11 +18,11 @@ raylib = "1.0.0"
 ```
 
 ```
-cgmath = "0.17.0"
+rand = "0.7.3"
 ```
 
 ```
-gl = "0.14.0"
+byteorder = "1.3.4"
 ```
 
 ## Requirements for linux
