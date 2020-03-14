@@ -78,12 +78,13 @@ fn draw_tiles(d: &mut RaylibDrawHandle, tiles: &[(i32, i32)], color: Color) {
         );
     }
 }
-#[allow(clippy::collapsible_if)]
+
+#[allow(clippy::explicit_counter_loop)]
 impl State for Game {
     fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {
-        self.map.load();
+        self.map.load().expect("load failed");
     }
-
+    #[allow(clippy::cognitive_complexity)]
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
         self.timer += 1;
         //USER INPUT
@@ -94,11 +95,9 @@ impl State for Game {
         let mouse = rl.get_mouse_position();
         if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {}
 
-        if self.nextstate != -1 {
-            if rl.is_mouse_button_released(MouseButton::MOUSE_LEFT_BUTTON) {
-                self.state = self.nextstate;
-                self.nextstate = -1;
-            }
+        if self.nextstate != -1 && rl.is_mouse_button_released(MouseButton::MOUSE_LEFT_BUTTON) {
+            self.state = self.nextstate;
+            self.nextstate = -1;
         }
 
         if self.state == IDLE_STATE {
@@ -134,35 +133,31 @@ impl State for Game {
             self.nextstate = IDLE_STATE;
         }
 
-        if self.state == MOVE_STATE {
-            if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
-                for tuple in &self.tiles.clone() {
-                    //if mouse over tile
-                    let tile_x = tuple.0 as f32 * TILE_SCALED;
-                    let tile_y = tuple.1 as f32 * TILE_SCALED;
+        if self.state == MOVE_STATE && rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
+            for tuple in &self.tiles.clone() {
+                //if mouse over tile
+                let tile_x = tuple.0 as f32 * TILE_SCALED;
+                let tile_y = tuple.1 as f32 * TILE_SCALED;
 
-                    if mouse.x > tile_x
-                        && mouse.y > tile_y
-                        && mouse.x < tile_x + TILE_SCALED
-                        && mouse.y < tile_y + TILE_SCALED
-                    {
-                        self.prev_position.0 = self.units[self.selected_unit].x;
-                        self.prev_position.1 = self.units[self.selected_unit].y;
-                        self.units[self.selected_unit].x = tile_x as i32;
-                        self.units[self.selected_unit].y = tile_y as i32;
-                        self.nextstate = MENU_STATE;
-                        self.tiles = floodfill(
-                            &self.map,
-                            (
-                                self.units[self.selected_unit].x
-                                    / (TILE_SIZE as f32 * SCALE) as i32,
-                                self.units[self.selected_unit].y
-                                    / (TILE_SIZE as f32 * SCALE) as i32,
-                            ),
-                            self.units[self.selected_unit].attackrange,
-                            attack_heuristic,
-                        );
-                    }
+                if mouse.x > tile_x
+                    && mouse.y > tile_y
+                    && mouse.x < tile_x + TILE_SCALED
+                    && mouse.y < tile_y + TILE_SCALED
+                {
+                    self.prev_position.0 = self.units[self.selected_unit].x;
+                    self.prev_position.1 = self.units[self.selected_unit].y;
+                    self.units[self.selected_unit].x = tile_x as i32;
+                    self.units[self.selected_unit].y = tile_y as i32;
+                    self.nextstate = MENU_STATE;
+                    self.tiles = floodfill(
+                        &self.map,
+                        (
+                            self.units[self.selected_unit].x / (TILE_SIZE as f32 * SCALE) as i32,
+                            self.units[self.selected_unit].y / (TILE_SIZE as f32 * SCALE) as i32,
+                        ),
+                        self.units[self.selected_unit].attackrange,
+                        attack_heuristic,
+                    );
                 }
             }
         }
@@ -178,6 +173,7 @@ impl State for Game {
                 let mut selected_enemy: i32 = -1;
                 let mut i: i32 = 0;
                 for u in &self.enemies {
+                    //for u in &self.enemies {
                     i += 1;
                     if mouse.x > u.x as f32 + self.map.x as f32
                         && mouse.y > u.y as f32 + self.map.y as f32
@@ -366,6 +362,7 @@ impl State for Game {
 }
 
 impl Game {
+    #[allow(dead_code)]
     pub fn new(rl: &mut RaylibHandle, thread: &mut RaylibThread) -> Self {
         Game {
             map: Map::new(25, 25, rl, thread),
@@ -409,7 +406,7 @@ impl Game {
             state: IDLE_STATE,
             nextstate: -1,
             units: friendlies,
-            enemies: enemies,
+            enemies,
             sprites: vec![
                 rl.load_texture(thread, "art/skeleton_v2_1.png").unwrap(),
                 rl.load_texture(thread, "art/skeleton_v2_2.png").unwrap(),
