@@ -44,6 +44,7 @@ impl Unit {
             basehit: 0,
         }
     }
+    #[allow(clippy::too_many_arguments)]
     pub fn new_custom(
         id: i32,
         name: &str,
