@@ -14,7 +14,7 @@ pub struct Map {
     pub y: i32,
     pub tiles: Texture2D,
 }
-#[allow(dead_code)]
+
 #[allow(clippy::needless_range_loop)]
 impl Map {
     pub fn new(

@@ -73,17 +73,17 @@ impl Unit {
             x: x * (TILE_SIZE as f32 * SCALE) as i32,
             y: y * (TILE_SIZE as f32 * SCALE) as i32,
 
-            alive: alive,
-            counter: counter,
+            alive,
+            counter,
 
-            maxhealth: maxhealth,
-            health: health,
-            moverange: moverange,
-            attackrange: attackrange,
-            armor: armor,
-            maxdamage: maxdamage,
-            mindamage: mindamage,
-            basehit: basehit,
+            maxhealth,
+            health,
+            moverange,
+            attackrange,
+            armor,
+            maxdamage,
+            mindamage,
+            basehit,
         }
     }
 
@@ -93,6 +93,7 @@ impl Unit {
 
     //this function is both a setter and a getter. It checks if a unit is dead,
     //if they aren't it checks if they should be, and sets them as dead accordingly
+    #[allow(dead_code)]
     pub fn is_alive(&mut self) -> bool {
         if self.alive && self.health > 0 {
             return true;
