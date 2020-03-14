@@ -24,8 +24,10 @@ impl Map {
     ) -> Self {
         let mut grid: Vec<Vec<i32>> = vec![];
         grid.resize(width, vec![]);
-        for x in 0..width {
-            grid[x].resize(height, 78);
+        let mut i = 0;
+        while i < width{
+            grid[i].resize(height, 78);
+            i += 1;
         }
         Map {
             grid,
@@ -121,7 +123,7 @@ impl FillNode {
         FillNode { x, y, depth }
     }
 }
-
+#[allow(clippy::too_many_arguments)]
 fn add_fill_node(
     map: &Map,
     dx: i32,

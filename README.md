@@ -52,7 +52,9 @@ Ensure that cmake is installed before running with cargo build, this can be acqu
 For unit testing in this project we did...
 
 ## Results
-Overall the project went well and we successfully developed the basic framework for the game we set out to make. We wish we could have developed and fleshed out the game more but are satisfied that we managed to accomplish all the core functions. A few things that didn't work were our old methods of using queues in C++ as well as references and direct writing of ints to a file, although all of this was solved after sufficiently looking up alternative Rust based solutions. 
+Overall the project went well and we successfully developed the basic framework for the game we set out to make. We wish we could have developed and fleshed out the game more but are satisfied that we managed to accomplish all the core functions. 
+
+A few things that didn't work were our old methods of using queues in C++ as well as references and direct writing of ints to a file, although all of this was solved after sufficiently looking up alternative Rust based solutions. We did also have to end up using two allowances for clippy due to two separate functions having too many arguments, this was done due to it making the code cleaner because of their complex nature as well as allowing us to not unnecessarily duplicate the code outside of the helper functions.
 
 As to what worked well the map editor and unit selection came out quite well with only a few borrow checker errors that had to be solved at the time, the main-menu and state transition system also worked well and was fairly simple to make use of for later development once it was set up.
 
