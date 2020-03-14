@@ -35,6 +35,7 @@ fn main() {
     let enemies: Vec<Unit> = vec![
         Unit::new_custom(1, "toby", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 3, 2),
         Unit::new_custom(2, "annie", true, false, 100, 100, 4, 1, 2, 7, 3, 4, 6, 2),
+        Unit::new(),
     ];
 
     //Initialize states

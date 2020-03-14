@@ -263,13 +263,15 @@ impl State for Game {
                 15,
                 Color::BLACK,
             );
-            d.draw_rectangle(
-                unit.x + 2,
-                unit.y - 13,
-                (unit.health / unit.maxhealth) * (TILE_SCALED as i32 - 8),
-                12,
-                Color::GREEN,
-            );
+            if unit.maxhealth != 0 {
+                d.draw_rectangle(
+                    unit.x + 2,
+                    unit.y - 13,
+                    (unit.health / unit.maxhealth) * (TILE_SCALED as i32 - 8),
+                    12,
+                    Color::GREEN,
+                );
+            }
         }
         for unit in &mut self.enemies {
             unit.draw(&mut d, &self.sprites, self.timer);
@@ -280,13 +282,15 @@ impl State for Game {
                 15,
                 Color::BLACK,
             );
-            d.draw_rectangle(
-                unit.x + 2,
-                unit.y - 13,
-                (unit.health / unit.maxhealth) * (TILE_SCALED as i32 - 8),
-                12,
-                Color::RED,
-            );
+            if unit.maxhealth != 0 {
+                d.draw_rectangle(
+                    unit.x + 2,
+                    unit.y - 13,
+                    (unit.health / unit.maxhealth) * (TILE_SCALED as i32 - 8),
+                    12,
+                    Color::RED,
+                );
+            }
         }
 
         if self.state == MOVE_STATE {

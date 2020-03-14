@@ -23,6 +23,27 @@ pub struct Unit {
 }
 
 impl Unit {
+    pub fn new() -> Self {
+        Unit {
+            id: 0,
+            currentframe: 0,
+            name: "".to_string(),
+            x: 0,
+            y: 0,
+
+            alive: true,
+            counter: false,
+
+            maxhealth: 0,
+            health: 0,
+            moverange: 1,
+            attackrange: 1,
+            armor: 0,
+            maxdamage: 0,
+            mindamage: 0,
+            basehit: 0,
+        }
+    }
     pub fn new_custom(
         id: i32,
         name: &str,
@@ -95,9 +116,19 @@ impl Unit {
     }
 
     pub fn ismoused(&self, mouse: Vector2, tile_size: f32, scale: f32) -> bool {
-        mouse.x > self.x as f32
-            && mouse.y > self.y as f32
-            && mouse.x < self.x as f32 + (tile_size * scale)
-            && mouse.y < self.y as f32 + (tile_size * scale)
+        mouse.x >= self.x as f32
+            && mouse.y >= self.y as f32
+            && mouse.x <= self.x as f32 + (tile_size * scale)
+            && mouse.y <= self.y as f32 + (tile_size * scale)
     }
+}
+
+#[test]
+fn test_ismoused() {
+    let test_u = Unit::new();
+    assert_eq!(test_u.ismoused(Vector2::new(12.0, 12.0), 16.0, 1.0), true);
+    assert_eq!(test_u.ismoused(Vector2::new(16.0, 16.0), 16.0, 1.0), true);
+    assert_eq!(test_u.ismoused(Vector2::new(0.0, 0.0), 16.0, 1.0), true);
+    assert_eq!(test_u.ismoused(Vector2::new(-5.0, -5.0), 16.0, 1.0), false);
+    assert_eq!(test_u.ismoused(Vector2::new(32.0, 32.0), 16.0, 1.0), false);
 }
