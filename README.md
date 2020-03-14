@@ -7,7 +7,7 @@ Max Van Raden <vanraden@pdx.edu>
 
 A top down isometric turn-based strategy game making use of open source assets. This was written in Rust for the intro to Rust programming 410P/510P winter 2020 course at Portland State University.
 ## Instructions
- Execute cargo build && cargo run to install the dependencies for the program before running it.
+ Execute cargo build && cargo run to install the dependencies for the program before running it, may take a minute to install raylibs.
 ## Dependencies
 ```
 [dependencies]
@@ -46,10 +46,14 @@ $ cd cmake-3.15.2
 ```
 ## Requirements for windows
 
-Ensure that cmake is installed before running with cargo build, this can be acquired at [here](https://cmake.org/download/). Make sure to select the option to have it set a PATH variable.
+Ensure that cmake is installed before running with cargo build, this can be acquired [here](https://cmake.org/download/). Make sure to select the option to have it set a PATH variable.
 
 ## Testing
 For unit testing in this project we did...
 
 ## Results
-Overall the project....
+Overall the project went well and we successfully developed the basic framework for the game we set out to make. We wish we could have developed and fleshed out the game more but are satisfied that we managed to accomplish all the core functions. A few things that didn't work were our old methods of using queues in C++ as well as references and direct writing of ints to a file, although all of this was solved after sufficiently looking up alternative Rust based solutions. 
+
+As to what worked well the map editor and unit selection came out quite well with only a few borrow checker errors that had to be solved at the time, the main-menu and state transition system also worked well and was fairly simple to make use of for later development once it was set up.
+
+For the future, as stated before fleshing out the game would be desirable with more levels,enemies,combat depth and content in general. On the more technical aspect setting up dynamic resolution so that all assets are properly adjusted would be a nice addition later on.

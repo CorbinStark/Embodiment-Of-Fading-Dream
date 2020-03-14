@@ -2,8 +2,6 @@ use crate::*;
 
 const PLACE: u8 = 0;
 const TILES: u8 = 1;
-#[allow(dead_code)]
-const UNITS: u8 = 2;
 
 pub struct MapEditor {
     options: Vec<String>,
@@ -14,19 +12,10 @@ pub struct MapEditor {
 
 impl State for MapEditor {
     fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
-    #[allow(unused_variables)]
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
         //USER INPUT
 
         let mouse = rl.get_mouse_position();
-        if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {}
-        if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
-            let mouse = rl.get_mouse_position();
-            //if mouse position is on top of a unit
-            //if unit isnt player owned
-            //if unit is on a valid attack tile
-            //attack it!
-        }
         if rl.is_key_pressed(KeyboardKey::KEY_F1) {
             if self.state == TILES {
                 self.state = PLACE;
@@ -39,10 +28,23 @@ impl State for MapEditor {
             return 1;
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F3) {
+<<<<<<< HEAD
+<<<<<<< HEAD
+            self.map.save().expect("Saving failed");
+        }
+        if rl.is_key_pressed(KeyboardKey::KEY_F4) {
+            self.map.load().expect("Loading failed");
+=======
+=======
+>>>>>>> 3bb0f8b832ef13738d50f121f94f8274fffb0dd3
             self.map.save().expect("Unable to execute save.");
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F4) {
             self.map.load().expect("Unable to execute load.");
+<<<<<<< HEAD
+>>>>>>> 565d1cdac4b860347c6f7ac77b4fe93e50dbb1c5
+=======
+>>>>>>> 3bb0f8b832ef13738d50f121f94f8274fffb0dd3
         }
         let mut clicked_tileset: bool = false;
         let mut hovering_tileset: bool = false;
