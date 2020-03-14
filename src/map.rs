@@ -25,7 +25,7 @@ impl Map {
         let mut grid: Vec<Vec<i32>> = vec![];
         grid.resize(width, vec![]);
         let mut i = 0;
-        while i < width{
+        while i < width {
             grid[i].resize(height, 78);
             i += 1;
         }

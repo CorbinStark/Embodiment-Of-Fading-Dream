@@ -1,11 +1,13 @@
-# Embodiment-Of-Fading-Dream
+# Embodiment-Of-Fading-Dream-RPG
+https://github.com/CorbinStark/Embodiment-Of-Fading-Dream
+
 Forest Pearson <fpearson@pdx.edu>
 
 Corbin Stark <costark@pdx.edu>
 
 Max Van Raden <vanraden@pdx.edu>
 
-A top down isometric turn-based strategy game making use of open source assets. This was written in Rust for the intro to Rust programming 410P/510P winter 2020 course at Portland State University.
+A top down isometric turn-based strategy game making use of open source assets. This was written in Rust for the intro to Rust programming 410P/510P winter 2020 course at Portland State University. Utilizes open source assets: https://0x72.itch.io/16x16-dungeon-tileset
 ## Instructions
  Execute cargo build && cargo run to install the dependencies for the program before running it, may take a minute to install raylibs.
 ## Dependencies
@@ -49,7 +51,13 @@ $ cd cmake-3.15.2
 Ensure that cmake is installed before running with cargo build, this can be acquired [here](https://cmake.org/download/). Make sure to select the option to have it set a PATH variable.
 
 ## Testing
-For unit testing in this project we did...
+Testing via unit test for our project was somewhat limited due to the nature of many of our functions returning something that is difficult to verify using the assert macro. Because of this, most of our unit tests focus on functions that return either boolean or i32 values, as those outputs are easily verified. 
+
+Specifically, using unit tests, we tested the heuristic functions responsible for making floodfill function. This was valuable, as floodfill is a relatively complex function, and unit tests verifying the reliability of the underlying heuristics made the process of debugging easier. 
+
+As part of our combat system, we implemented hit chance using RNG. Using unit tests, we verified that expected results would be returned consistently based on the given test unit's base hit chance.
+
+Finally, we used unit testing to ensure that selecting units and menu options was working correctly by testing the ismoused function.
 
 ## Results
 Overall the project went well and we successfully developed the basic framework for the game we set out to make. We wish we could have developed and fleshed out the game more but are satisfied that we managed to accomplish all the core functions. 

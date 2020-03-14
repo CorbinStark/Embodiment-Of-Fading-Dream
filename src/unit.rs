@@ -147,4 +147,3 @@ fn test_get_damage_hit() {
     test_unit.maxdamage = 1;
     assert_eq!(test_unit.get_damage(), 0);
 }
-
