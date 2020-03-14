@@ -123,10 +123,6 @@ impl Unit {
     }
 }
 
-<<<<<<< HEAD
-#[cfg(test)]
-mod tests {
-=======
 #[test]
 fn test_ismoused() {
     let test_u = Unit::new();
@@ -135,5 +131,4 @@ fn test_ismoused() {
     assert_eq!(test_u.ismoused(Vector2::new(0.0, 0.0), 16.0, 1.0), true);
     assert_eq!(test_u.ismoused(Vector2::new(-5.0, -5.0), 16.0, 1.0), false);
     assert_eq!(test_u.ismoused(Vector2::new(32.0, 32.0), 16.0, 1.0), false);
->>>>>>> CorbinStark-master
 }

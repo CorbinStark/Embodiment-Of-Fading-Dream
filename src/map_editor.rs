@@ -28,23 +28,10 @@ impl State for MapEditor {
             return 1;
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F3) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-            self.map.save().expect("Saving failed");
-        }
-        if rl.is_key_pressed(KeyboardKey::KEY_F4) {
-            self.map.load().expect("Loading failed");
-=======
-=======
->>>>>>> 3bb0f8b832ef13738d50f121f94f8274fffb0dd3
             self.map.save().expect("Unable to execute save.");
         }
         if rl.is_key_pressed(KeyboardKey::KEY_F4) {
             self.map.load().expect("Unable to execute load.");
-<<<<<<< HEAD
->>>>>>> 565d1cdac4b860347c6f7ac77b4fe93e50dbb1c5
-=======
->>>>>>> 3bb0f8b832ef13738d50f121f94f8274fffb0dd3
         }
         let mut clicked_tileset: bool = false;
         let mut hovering_tileset: bool = false;
