@@ -12,7 +12,7 @@ pub struct Unit {
     counter: bool,
 
     pub health: i32,
-    maxhealth: i32,
+    pub maxhealth: i32,
     pub moverange: i32,
     pub attackrange: i32,
     armor: i32,
@@ -23,33 +23,27 @@ pub struct Unit {
 }
 
 impl Unit {
-    //
-    //Constructors for various unit types
-    //
-    #[allow(dead_code)]
     pub fn new() -> Self {
         Unit {
             id: 0,
             currentframe: 0,
-            name: "Default".to_string(),
+            name: "".to_string(),
             x: 0,
             y: 0,
 
             alive: true,
-            counter: true,
+            counter: false,
 
             maxhealth: 0,
             health: 0,
-            moverange: 0,
-            attackrange: 0,
+            moverange: 1,
+            attackrange: 1,
             armor: 0,
             maxdamage: 0,
             mindamage: 0,
             basehit: 0,
         }
     }
-    #[allow(dead_code)]
-    #[allow(clippy::too_many_arguments)] //Very large function, requires the exception if we aren't reducing it.
     pub fn new_custom(
         id: i32,
         name: &str,
@@ -73,40 +67,23 @@ impl Unit {
             x: x * (TILE_SIZE as f32 * SCALE) as i32,
             y: y * (TILE_SIZE as f32 * SCALE) as i32,
 
-            alive: alive,
-            counter: counter,
+            alive,
+            counter,
 
-            maxhealth: maxhealth,
-            health: health,
-            moverange: moverange,
-            attackrange: attackrange,
-            armor: armor,
-            maxdamage: maxdamage,
-            mindamage: mindamage,
-            basehit: basehit,
+            maxhealth,
+            health,
+            moverange,
+            attackrange,
+            armor,
+            maxdamage,
+            mindamage,
+            basehit,
         }
     }
 
     //
     //Whatever functions units need
     //
-
-    //this function is both a setter and a getter. It checks if a unit is dead,
-    //if they aren't it checks if they should be, and sets them as dead accordingly
-    pub fn is_alive(&mut self) -> bool {
-        if self.alive && self.health > 0 {
-            return true;
-        }
-        if !self.alive {
-            return false;
-        }
-        if self.health <= 0 {
-            self.alive = false;
-            false
-        } else {
-            true
-        }
-    }
 
     //generates hit damage, returns -1 to indicate attack missing
     pub fn get_damage(&self) -> i32 {
@@ -139,9 +116,19 @@ impl Unit {
     }
 
     pub fn ismoused(&self, mouse: Vector2, tile_size: f32, scale: f32) -> bool {
-        mouse.x > self.x as f32
-            && mouse.y > self.y as f32
-            && mouse.x < self.x as f32 + (tile_size * scale)
-            && mouse.y < self.y as f32 + (tile_size * scale)
+        mouse.x >= self.x as f32
+            && mouse.y >= self.y as f32
+            && mouse.x <= self.x as f32 + (tile_size * scale)
+            && mouse.y <= self.y as f32 + (tile_size * scale)
     }
+}
+
+#[test]
+fn test_ismoused() {
+    let test_u = Unit::new();
+    assert_eq!(test_u.ismoused(Vector2::new(12.0, 12.0), 16.0, 1.0), true);
+    assert_eq!(test_u.ismoused(Vector2::new(16.0, 16.0), 16.0, 1.0), true);
+    assert_eq!(test_u.ismoused(Vector2::new(0.0, 0.0), 16.0, 1.0), true);
+    assert_eq!(test_u.ismoused(Vector2::new(-5.0, -5.0), 16.0, 1.0), false);
+    assert_eq!(test_u.ismoused(Vector2::new(32.0, 32.0), 16.0, 1.0), false);
 }
