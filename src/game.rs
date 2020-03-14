@@ -20,13 +20,14 @@ pub struct Game {
 }
 
 fn move_heuristic(id: i32) -> i32 {
-    //return -1 for wall tiles (quite a few of them lol)
+    //return 1 for ground tiles
     if id >= 21 && id <= 24 {
         return 1;
     }
     if id >= 31 && id <= 34 {
         return 1;
     }
+    //return -1 for wall tiles (quite a few of them lol)
     if id >= 0 && id <= 5 {
         return -1;
     }
@@ -262,13 +263,15 @@ impl State for Game {
                 15,
                 Color::BLACK,
             );
-            d.draw_rectangle(
-                unit.x + 2,
-                unit.y - 13,
-                (unit.health / unit.maxhealth) * (TILE_SCALED as i32 - 8),
-                12,
-                Color::GREEN,
-            );
+            if unit.maxhealth != 0 {
+                d.draw_rectangle(
+                    unit.x + 2,
+                    unit.y - 13,
+                    (unit.health / unit.maxhealth) * (TILE_SCALED as i32 - 8),
+                    12,
+                    Color::GREEN,
+                );
+            }
         }
         for unit in &mut self.enemies {
             unit.draw(&mut d, &self.sprites, self.timer);
@@ -279,13 +282,15 @@ impl State for Game {
                 15,
                 Color::BLACK,
             );
-            d.draw_rectangle(
-                unit.x + 2,
-                unit.y - 13,
-                (unit.health / unit.maxhealth) * (TILE_SCALED as i32 - 8),
-                12,
-                Color::RED,
-            );
+            if unit.maxhealth != 0 {
+                d.draw_rectangle(
+                    unit.x + 2,
+                    unit.y - 13,
+                    (unit.health / unit.maxhealth) * (TILE_SCALED as i32 - 8),
+                    12,
+                    Color::RED,
+                );
+            }
         }
 
         if self.state == MOVE_STATE {
@@ -361,38 +366,6 @@ impl State for Game {
 }
 
 impl Game {
-    #[allow(dead_code)]
-    pub fn new(rl: &mut RaylibHandle, thread: &mut RaylibThread) -> Self {
-        Game {
-            map: Map::new(25, 25, rl, thread),
-            tiles: vec![],
-            state: IDLE_STATE,
-            nextstate: -1,
-            units: vec![],
-            enemies: vec![],
-            sprites: vec![
-                rl.load_texture(thread, "art/skeleton_v2_1.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton_v2_2.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton_v2_3.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton_v2_4.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton2_v2_1.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton2_v2_2.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton2_v2_3.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton2_v2_4.png").unwrap(),
-                rl.load_texture(thread, "art/skull_v2_1.png").unwrap(),
-                rl.load_texture(thread, "art/skull_v2_2.png").unwrap(),
-                rl.load_texture(thread, "art/skull_v2_3.png").unwrap(),
-                rl.load_texture(thread, "art/skull_v2_4.png").unwrap(),
-                rl.load_texture(thread, "art/vampire_v2_1.png").unwrap(),
-                rl.load_texture(thread, "art/vampire_v2_2.png").unwrap(),
-                rl.load_texture(thread, "art/vampire_v2_3.png").unwrap(),
-                rl.load_texture(thread, "art/vampire_v2_4.png").unwrap(),
-            ],
-            timer: 0,
-            selected_unit: 0,
-            prev_position: (0, 0),
-        }
-    }
     pub fn from_unit_population(
         rl: &mut RaylibHandle,
         thread: &mut RaylibThread,
@@ -428,5 +401,22 @@ impl Game {
             selected_unit: 0,
             prev_position: (0, 0),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_move_heuristic() {
+        assert_eq!(move_heuristic(3), -1);
+        assert_eq!(move_heuristic(46), 1);
+        assert_eq!(move_heuristic(0), -1);
+    }
+    #[test]
+    fn test_attack_heuristic() {
+        assert_eq!(attack_heuristic(0), -1);
+        assert_eq!(attack_heuristic(1), 1);
     }
 }

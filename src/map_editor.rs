@@ -2,8 +2,6 @@ use crate::*;
 
 const PLACE: u8 = 0;
 const TILES: u8 = 1;
-#[allow(dead_code)]
-const UNITS: u8 = 2;
 
 pub struct MapEditor {
     options: Vec<String>,
@@ -14,19 +12,10 @@ pub struct MapEditor {
 
 impl State for MapEditor {
     fn enter(&mut self, _rl: &mut RaylibHandle, _thread: &mut RaylibThread) {}
-    #[allow(unused_variables)]
     fn run(&mut self, rl: &mut RaylibHandle, thread: &mut RaylibThread) -> usize {
         //USER INPUT
 
         let mouse = rl.get_mouse_position();
-        if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {}
-        if rl.is_mouse_button_pressed(MouseButton::MOUSE_LEFT_BUTTON) {
-            let mouse = rl.get_mouse_position();
-            //if mouse position is on top of a unit
-            //if unit isnt player owned
-            //if unit is on a valid attack tile
-            //attack it!
-        }
         if rl.is_key_pressed(KeyboardKey::KEY_F1) {
             if self.state == TILES {
                 self.state = PLACE;
