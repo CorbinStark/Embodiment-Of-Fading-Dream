@@ -133,3 +133,18 @@ fn test_ismoused() {
     assert_eq!(test_u.ismoused(Vector2::new(-5.0, -5.0), 16.0, 1.0), false);
     assert_eq!(test_u.ismoused(Vector2::new(32.0, 32.0), 16.0, 1.0), false);
 }
+
+#[test]
+fn test_get_damage_no_hit() {
+    let test_unit = Unit::new();
+    assert_eq!(test_unit.get_damage(), -1);
+}
+
+#[test]
+fn test_get_damage_hit() {
+    let mut test_unit = Unit::new();
+    test_unit.basehit = 100;
+    test_unit.maxdamage = 1;
+    assert_eq!(test_unit.get_damage(), 0);
+}
+
