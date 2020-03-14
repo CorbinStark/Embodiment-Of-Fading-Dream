@@ -362,38 +362,6 @@ impl State for Game {
 }
 
 impl Game {
-    #[allow(dead_code)]
-    pub fn new(rl: &mut RaylibHandle, thread: &mut RaylibThread) -> Self {
-        Game {
-            map: Map::new(25, 25, rl, thread),
-            tiles: vec![],
-            state: IDLE_STATE,
-            nextstate: -1,
-            units: vec![],
-            enemies: vec![],
-            sprites: vec![
-                rl.load_texture(thread, "art/skeleton_v2_1.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton_v2_2.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton_v2_3.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton_v2_4.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton2_v2_1.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton2_v2_2.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton2_v2_3.png").unwrap(),
-                rl.load_texture(thread, "art/skeleton2_v2_4.png").unwrap(),
-                rl.load_texture(thread, "art/skull_v2_1.png").unwrap(),
-                rl.load_texture(thread, "art/skull_v2_2.png").unwrap(),
-                rl.load_texture(thread, "art/skull_v2_3.png").unwrap(),
-                rl.load_texture(thread, "art/skull_v2_4.png").unwrap(),
-                rl.load_texture(thread, "art/vampire_v2_1.png").unwrap(),
-                rl.load_texture(thread, "art/vampire_v2_2.png").unwrap(),
-                rl.load_texture(thread, "art/vampire_v2_3.png").unwrap(),
-                rl.load_texture(thread, "art/vampire_v2_4.png").unwrap(),
-            ],
-            timer: 0,
-            selected_unit: 0,
-            prev_position: (0, 0),
-        }
-    }
     pub fn from_unit_population(
         rl: &mut RaylibHandle,
         thread: &mut RaylibThread,

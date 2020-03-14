@@ -23,33 +23,6 @@ pub struct Unit {
 }
 
 impl Unit {
-    //
-    //Constructors for various unit types
-    //
-    #[allow(dead_code)]
-    pub fn new() -> Self {
-        Unit {
-            id: 0,
-            currentframe: 0,
-            name: "Default".to_string(),
-            x: 0,
-            y: 0,
-
-            alive: true,
-            counter: true,
-
-            maxhealth: 0,
-            health: 0,
-            moverange: 0,
-            attackrange: 0,
-            armor: 0,
-            maxdamage: 0,
-            mindamage: 0,
-            basehit: 0,
-        }
-    }
-    #[allow(dead_code)]
-    #[allow(clippy::too_many_arguments)] //Very large function, requires the exception if we aren't reducing it.
     pub fn new_custom(
         id: i32,
         name: &str,
@@ -90,24 +63,6 @@ impl Unit {
     //
     //Whatever functions units need
     //
-
-    //this function is both a setter and a getter. It checks if a unit is dead,
-    //if they aren't it checks if they should be, and sets them as dead accordingly
-    #[allow(dead_code)]
-    pub fn is_alive(&mut self) -> bool {
-        if self.alive && self.health > 0 {
-            return true;
-        }
-        if !self.alive {
-            return false;
-        }
-        if self.health <= 0 {
-            self.alive = false;
-            false
-        } else {
-            true
-        }
-    }
 
     //generates hit damage, returns -1 to indicate attack missing
     pub fn get_damage(&self) -> i32 {
