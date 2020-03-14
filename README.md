@@ -7,7 +7,7 @@ Max Van Raden <vanraden@pdx.edu>
 
 A top down isometric turn-based strategy game making use of open source assets. This was written in Rust for the intro to Rust programming 410P/510P winter 2020 course at Portland State University.
 ## Instructions
- Execute cargo build && cargo run to install the dependencies for the program before running it.
+ Execute cargo build && cargo run to install the dependencies for the program before running it, may take a minute to install raylibs.
 ## Dependencies
 ```
 [dependencies]
